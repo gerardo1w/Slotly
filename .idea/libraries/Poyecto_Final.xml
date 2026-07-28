@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Poyecto_Final">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/Frontend-RC.zip!/" />
+      <root url="jar://$PROJECT_DIR$/Backend-RC-fixed.zip!/" />
+      <root url="jar://$PROJECT_DIR$/Backeng-RC.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,983 @@
+<div class="flex min-h-screen bg-[#f0f4f8] font-sans">
+  
+  <!-- Sidebar Navigation Section -->
+  <aside class="w-64 bg-white border-r border-slate-100 flex flex-col justify-between p-6 flex-shrink-0">
+    <div class="space-y-6">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center gap-2.5 px-2">
+        <div class="w-8 h-8 rounded-full bg-[#00a775] flex items-center justify-center text-white shadow-sm">
+          <i class="pi pi-bolt text-sm"></i>
+        </div>
+        <div>
+          <span class="text-base font-bold text-slate-800 tracking-wide leading-none block">Slotly</span>
+          <span class="block text-[7px] tracking-wider text-[#00c58a]/70 font-semibold uppercase mt-0.5">Gestión de Canchas</span>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs Menu List -->
+      <nav class="space-y-1.5 flex flex-col">
+        <button 
+          (click)="activeSection = 'dashboard'"
+          [ngClass]="activeSection === 'dashboard' ? 'bg-[#00a775] text-white shadow-sm font-extrabold' : 'text-slate-500 hover:bg-slate-50 font-medium bg-transparent'"
+          class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs transition-all border-none outline-none cursor-pointer w-full text-left"
+        >
+          <i class="pi pi-th-large text-sm"></i> Tablero
+        </button>
+        <button 
+          (click)="activeSection = 'mis-canchas'"
+          [ngClass]="activeSection === 'mis-canchas' ? 'bg-[#00a775] text-white shadow-sm font-extrabold' : 'text-slate-500 hover:bg-slate-50 font-medium bg-transparent'"
+          class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs transition-all border-none outline-none cursor-pointer w-full text-left"
+        >
+          <i class="pi pi-map-marker text-sm"></i> Mis Canchas
+        </button>
+        <button 
+          (click)="activeSection = 'mi-local'"
+          [ngClass]="activeSection === 'mi-local' ? 'bg-[#00a775] text-white shadow-sm font-extrabold' : 'text-slate-500 hover:bg-slate-50 font-medium bg-transparent'"
+          class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs transition-all border-none outline-none cursor-pointer w-full text-left"
+        >
+          <i class="pi pi-home text-sm"></i> Mi Local
+        </button>
+        <button 
+          (click)="activeSection = 'scheduler'"
+          [ngClass]="activeSection === 'scheduler' ? 'bg-[#00a775] text-white shadow-sm font-extrabold' : 'text-slate-500 hover:bg-slate-50 font-medium bg-transparent'"
+          class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs transition-all border-none outline-none cursor-pointer w-full text-left"
+        >
+          <i class="pi pi-calendar text-sm"></i> Reservas
+        </button>
+        <button 
+          (click)="activeSection = 'inventory'"
+          [ngClass]="activeSection === 'inventory' ? 'bg-[#00a775] text-white shadow-sm font-extrabold' : 'text-slate-500 hover:bg-slate-50 font-medium bg-transparent'"
+          class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs transition-all border-none outline-none cursor-pointer w-full text-left"
+        >
+          <i class="pi pi-box text-sm"></i> Inventario
+        </button>
+        <button 
+          (click)="activeSection = 'expenses'"
+          [ngClass]="activeSection === 'expenses' ? 'bg-[#00a775] text-white shadow-sm font-extrabold' : 'text-slate-500 hover:bg-slate-50 font-medium bg-transparent'"
+          class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs transition-all border-none outline-none cursor-pointer w-full text-left"
+        >
+          <i class="pi pi-chart-line rotate-180 text-sm"></i> Gastos
+        </button>
+        <button 
+          (click)="activeSection = 'incomes'"
+          [ngClass]="activeSection === 'incomes' ? 'bg-[#00a775] text-white shadow-sm font-extrabold' : 'text-slate-500 hover:bg-slate-50 font-medium bg-transparent'"
+          class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs transition-all border-none outline-none cursor-pointer w-full text-left"
+        >
+          <i class="pi pi-chart-line text-sm"></i> Ingresos
+        </button>
+        <button 
+          (click)="activeSection = 'closure'"
+          [ngClass]="activeSection === 'closure' ? 'bg-[#00a775] text-white shadow-sm font-extrabold' : 'text-slate-500 hover:bg-slate-50 font-medium bg-transparent'"
+          class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs transition-all border-none outline-none cursor-pointer w-full text-left"
+        >
+          <i class="pi pi-lock text-sm"></i> Cierre de Caja
+        </button>
+      </nav>
+    </div>
+
+    <!-- User Profile Footer block -->
+    <div class="border-t border-slate-100 pt-4 space-y-3">
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-full bg-[#00a775] flex items-center justify-center text-white text-xs font-bold shadow-sm uppercase">
+          JQ
+        </div>
+        <div>
+          <span class="block text-xs font-bold text-slate-800">{{ currentUser?.name }}</span>
+          <span class="block text-[10px] text-slate-400 font-semibold">Plan Pro</span>
+        </div>
+      </div>
+      <button (click)="logout()" class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-rose-500 hover:bg-rose-50 text-[10px] font-bold transition-all border-none outline-none cursor-pointer w-full text-left bg-transparent">
+        <i class="pi pi-sign-out"></i> Cerrar sesión
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content Scroll Area -->
+  <main class="flex-1 pt-5 px-8 pb-8 overflow-y-auto max-h-screen">
+    
+    <!-- Top Global Feedback Message Alerts -->
+    <div *ngIf="infoMessage || errorMessage" class="max-w-5xl mx-auto mb-6">
+      <div *ngIf="infoMessage" class="p-4 rounded-2xl bg-emerald-50 border border-emerald-100 text-emerald-700 flex items-center gap-3 animate-fade-in text-xs font-semibold shadow-xs">
+        <i class="pi pi-check-circle"></i>
+        <span>{{ infoMessage }}</span>
+      </div>
+      <div *ngIf="errorMessage" class="p-4 rounded-2xl bg-rose-50 border border-rose-100 text-rose-700 flex items-center gap-3 animate-shake text-xs font-semibold shadow-xs">
+        <i class="pi pi-exclamation-triangle"></i>
+        <span>{{ errorMessage }}</span>
+      </div>
+    </div>
+
+    <!-- SECTION: TABLERO (DASHBOARD) -->
+    <div *ngIf="activeSection === 'dashboard'" class="max-w-5xl mx-auto space-y-6">
+      <!-- Title header -->
+      <div>
+        <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight leading-tight">Tablero</h1>
+        <p class="text-xs text-slate-400 mt-1 font-semibold leading-normal">{{ myComplex?.name }} — resumen de hoy</p>
+      </div>
+
+      <!-- 4 Metrics Cards Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        
+        <!-- Card 1: Ingresos Hoy -->
+        <div class="bg-white border-t-4 border-[#00a775] rounded-2xl p-5 shadow-sm flex items-center justify-between">
+          <div>
+            <span class="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Ingresos Hoy</span>
+            <h2 class="text-xl font-extrabold text-slate-800 mt-1">S/ {{ todayIncomes | number:'1.2-2' }}</h2>
+            <span class="text-[9px] text-[#00a775] font-bold mt-1.5 block">↗ vs ayer +12%</span>
+          </div>
+          <div class="w-9 h-9 rounded-full bg-[#00a775]/10 text-[#00a775] flex items-center justify-center text-xs">
+            <i class="pi pi-chart-line"></i>
+          </div>
+        </div>
+
+        <!-- Card 2: Gastos Hoy -->
+        <div class="bg-white border-t-4 border-[#ef4444] rounded-2xl p-5 shadow-sm flex items-center justify-between">
+          <div>
+            <span class="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Gastos Hoy</span>
+            <h2 class="text-xl font-extrabold text-slate-800 mt-1">S/ {{ todayExpenses | number:'1.2-2' }}</h2>
+            <span class="text-[9px] text-[#ef4444] font-bold mt-1.5 block">↘ {{ todayExpensesCount }} registros</span>
+          </div>
+          <div class="w-9 h-9 rounded-full bg-[#ef4444]/10 text-[#ef4444] flex items-center justify-center text-xs">
+            <i class="pi pi-chart-line rotate-180"></i>
+          </div>
+        </div>
+
+        <!-- Card 3: Neto Hoy -->
+        <div class="bg-white border-t-4 border-[#3b82f6] rounded-2xl p-5 shadow-sm flex items-center justify-between">
+          <div>
+            <span class="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Neto Hoy</span>
+            <h2 class="text-xl font-extrabold text-slate-800 mt-1">S/ {{ (todayIncomes - todayExpenses) | number:'1.2-2' }}</h2>
+            <span class="text-[9px] text-slate-400 font-medium mt-1.5 block">ingresos menos gastos</span>
+          </div>
+          <div class="w-9 h-9 rounded-full bg-[#3b82f6]/10 text-[#3b82f6] flex items-center justify-center text-xs">
+            <i class="pi pi-wallet"></i>
+          </div>
+        </div>
+
+        <!-- Card 4: Ingresos Semana -->
+        <div class="bg-white border-t-4 border-[#8b5cf6] rounded-2xl p-5 shadow-sm flex items-center justify-between">
+          <div>
+            <span class="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Ingresos Semana</span>
+            <h2 class="text-xl font-extrabold text-slate-800 mt-1">S/ {{ weeklyIncomes | number:'1.2-2' }}</h2>
+            <span class="text-[9px] text-[#8b5cf6] font-bold mt-1.5 block">↗ últimos 7 días</span>
+          </div>
+          <div class="w-9 h-9 rounded-full bg-[#8b5cf6]/10 text-[#8b5cf6] flex items-center justify-center text-xs">
+            <i class="pi pi-dollar"></i>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 3 Horizontal badge counters -->
+      <div class="grid grid-cols-3 gap-4">
+        <!-- Green box -->
+        <div class="bg-[#ecfdf5] border border-[#a7f3d0] rounded-2xl p-4 flex flex-col items-center justify-center text-center shadow-xs">
+          <span class="text-2xl font-extrabold text-[#047857]">{{ freeHoursCount }}</span>
+          <span class="text-[8px] font-bold text-slate-500 uppercase tracking-widest mt-1">Horas Libres</span>
+        </div>
+        <!-- Red box -->
+        <div class="bg-[#fef2f2] border border-[#fecaca] rounded-2xl p-4 flex flex-col items-center justify-center text-center shadow-xs">
+          <span class="text-2xl font-extrabold text-[#b91c1c]">{{ occupiedHoursCount }}</span>
+          <span class="text-[8px] font-bold text-slate-500 uppercase tracking-widest mt-1">Ocupadas</span>
+        </div>
+        <!-- Yellow box -->
+        <div class="bg-[#fffbeb] border border-[#fef3c7] rounded-2xl p-4 flex flex-col items-center justify-center text-center shadow-xs">
+          <span class="text-2xl font-extrabold text-[#b45309]">{{ reservedHoursCount }}</span>
+          <span class="text-[8px] font-bold text-slate-500 uppercase tracking-widest mt-1">Reservadas</span>
+        </div>
+      </div>
+
+      <!-- Graph: Ingresos vs Gastos -->
+      <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm">
+        <h3 class="text-sm font-extrabold text-slate-800 mb-6">Ingresos vs Gastos — Esta semana</h3>
+
+        <div class="h-64 flex items-end justify-between px-4 pb-2 border-b border-slate-100 relative">
+          <!-- Grid Background lines -->
+          <div class="absolute inset-x-0 top-0 h-full flex flex-col justify-between pointer-events-none opacity-20 text-[9px] font-bold text-slate-400">
+            <div class="border-b border-slate-300 w-full pt-1">S/ 1000</div>
+            <div class="border-b border-slate-300 w-full">S/ 750</div>
+            <div class="border-b border-slate-300 w-full">S/ 500</div>
+            <div class="border-b border-slate-300 w-full">S/ 250</div>
+            <div class="w-full">S/ 0</div>
+          </div>
+          
+          <!-- Bar Elements -->
+          <div *ngFor="let day of weeklyChartData" class="flex flex-col items-center gap-2 z-10 flex-1">
+            <div class="w-8 bg-[#ef4444] rounded-t-lg transition-all duration-500" [style.height.px]="day.height"></div>
+            <span class="text-[10px] font-bold text-slate-400">{{ day.label }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table: Últimos Ingresos -->
+      <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-6">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3.5 mb-4">
+          <h3 class="text-sm font-extrabold text-slate-800">Últimos ingresos</h3>
+          <i class="pi pi-chart-line text-slate-300"></i>
+        </div>
+
+        <div class="divide-y divide-slate-100">
+          <div *ngFor="let inc of latestIncomes" class="py-3.5 flex items-center justify-between">
+            <div>
+              <h4 class="text-xs font-bold text-slate-700 leading-snug">{{ inc.description }}</h4>
+              <p class="text-[10px] text-slate-400 mt-0.5">{{ inc.date }} · {{ inc.sub }}</p>
+            </div>
+            <span class="text-xs font-extrabold text-emerald-600">S/ {{ inc.amount | number:'1.2-2' }}</span>
+          </div>
+          <div *ngIf="latestIncomes.length === 0" class="py-8 text-center text-xs text-slate-400">
+            No se han registrado ingresos hoy.
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- SECTION: MIS CANCHAS -->
+    <div *ngIf="activeSection === 'mis-canchas'" class="max-w-5xl mx-auto space-y-6">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Mis Canchas</h1>
+          <p class="text-xs text-slate-500 mt-1 font-medium">Publica y administra las canchas de tu complejo con precio, estado y resumen.</p>
+        </div>
+        <div class="bg-white rounded-2xl px-4 py-3 border border-slate-100 shadow-sm text-right">
+          <span class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total de canchas</span>
+          <span class="block text-xl font-extrabold text-[#00a775]">{{ myPitches.length }}</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 xl:grid-cols-[1.1fr_0.9fr] gap-6">
+        <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-4">
+          <span class="block text-[10px] font-bold text-slate-400 tracking-wider uppercase">{{ editingPitchId ? 'Editar cancha' : 'Publicar cancha' }}</span>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 text-xs font-semibold">
+            <div class="flex flex-col gap-1">
+              <label class="text-slate-500">Nombre</label>
+              <input type="text" [(ngModel)]="pitchFormName" placeholder="Cancha 4" class="bg-slate-50 border border-slate-200 focus:border-emerald-500 rounded-xl p-2.5 outline-none font-semibold text-slate-700">
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-slate-500">Deporte</label>
+              <select [(ngModel)]="pitchFormSport" class="bg-slate-50 border border-slate-200 focus:border-emerald-500 rounded-xl p-2.5 outline-none font-semibold text-slate-700 cursor-pointer">
+                <option value="Fútbol">Fútbol</option>
+                <option value="Tenis">Tenis</option>
+                <option value="Básquet">Básquet</option>
+                <option value="Pádel">Pádel</option>
+                <option value="Vóley">Vóley</option>
+              </select>
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-slate-500">Precio por hora (S/)</label>
+              <input type="number" [(ngModel)]="pitchFormPricePerHour" class="bg-slate-50 border border-slate-200 focus:border-emerald-500 rounded-xl p-2.5 outline-none font-semibold text-slate-700">
+            </div>
+            <div class="flex flex-col gap-1">
+              <label class="text-slate-500">Imagen URL</label>
+              <input type="text" [(ngModel)]="pitchFormImage" placeholder="https://..." class="bg-slate-50 border border-slate-200 focus:border-emerald-500 rounded-xl p-2.5 outline-none font-semibold text-slate-700">
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 text-xs font-semibold text-slate-600">
+            <input type="checkbox" [(ngModel)]="pitchFormActive" class="accent-[#00a775]">
+            <span>Cancha activa para reservas</span>
+          </div>
+
+          <div class="flex flex-wrap gap-3">
+            <button 
+              (click)="savePitch()"
+              class="bg-[#00a775] hover:bg-[#009468] text-white font-extrabold py-2.5 px-6 rounded-xl text-xs transition-all shadow-sm border-none cursor-pointer"
+            >
+              <i class="pi pi-save text-[10px] mr-1"></i> {{ editingPitchId ? 'Guardar cambios' : 'Publicar cancha' }}
+            </button>
+            <button 
+              *ngIf="editingPitchId"
+              (click)="resetPitchForm()"
+              class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-extrabold py-2.5 px-6 rounded-xl text-xs transition-all shadow-sm border-none cursor-pointer"
+            >
+              Cancelar
+            </button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-4 overflow-x-auto">
+          <div class="mb-4 flex items-center justify-between">
+            <h3 class="text-sm font-extrabold text-slate-800">Lista de canchas</h3>
+            <span class="text-[10px] font-bold text-slate-400">precio / hora</span>
+          </div>
+          <div class="space-y-3">
+            <div *ngFor="let pitch of myPitches" class="border border-slate-100 rounded-2xl p-3 flex items-center justify-between gap-3">
+              <div class="flex items-center gap-3 min-w-0">
+                <div class="w-12 h-12 rounded-xl bg-slate-100 overflow-hidden flex items-center justify-center text-slate-400">
+                  <i class="pi pi-map-marker text-sm"></i>
+                </div>
+                <div class="min-w-0">
+                  <h4 class="text-xs font-extrabold text-slate-800 truncate">{{ pitch.name }}</h4>
+                  <p class="text-[10px] text-slate-500 mt-0.5">{{ pitch.sport }} · <span class="font-semibold text-emerald-600">S/ {{ pitch.pricePerHour | number:'1.2-2' }}</span></p>
+                  <span [ngClass]="pitch.active ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-rose-50 text-rose-600 border-rose-100'" class="inline-block mt-1 px-2 py-0.5 rounded-full text-[9px] font-bold border">
+                    {{ pitch.active ? 'Activa' : 'Inactiva' }}
+                  </span>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button (click)="editPitch(pitch)" class="bg-transparent border-none text-slate-400 hover:text-[#00a775] p-1 cursor-pointer transition-all outline-none" title="Editar cancha">
+                  <i class="pi pi-pencil text-xs"></i>
+                </button>
+                <button (click)="deletePitch(pitch.id)" class="bg-transparent border-none text-slate-400 hover:text-rose-500 p-1 cursor-pointer transition-all outline-none" title="Eliminar cancha">
+                  <i class="pi pi-trash text-xs"></i>
+                </button>
+              </div>
+            </div>
+            <div *ngIf="myPitches.length === 0" class="py-8 text-center text-xs text-slate-400">
+              Aún no tienes canchas publicadas.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION: MI LOCAL (MANAGE COMPLEX DETAILS) -->
+    <div *ngIf="activeSection === 'mi-local'" class="max-w-5xl mx-auto space-y-6">
+      <!-- Page Header -->
+      <div>
+        <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Mi Local</h1>
+        <p class="text-xs text-slate-500 mt-1 font-medium">Gestiona la información pública de tu local que verán los clientes y controla su visibilidad.</p>
+      </div>
+
+      <!-- Main Layout Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Left Column: Form Details -->
+        <div class="lg:col-span-2 space-y-6">
+          <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-5">
+            <span class="block text-[10px] font-bold text-slate-400 tracking-wider uppercase">Detalles del Local</span>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-semibold">
+              <div class="flex flex-col gap-1.5">
+                <label class="text-slate-500">Nombre del Local</label>
+                <input type="text" [(ngModel)]="complexFormName" placeholder="Complejo Deportivo Norte" class="bg-slate-50 border border-slate-200 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-xl p-2.5 outline-none font-semibold text-slate-700 transition-all">
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <label class="text-slate-500">Teléfono de Contacto</label>
+                <input type="text" [(ngModel)]="complexFormPhone" placeholder="987654321" class="bg-slate-50 border border-slate-200 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-xl p-2.5 outline-none font-semibold text-slate-700 transition-all">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-semibold">
+              <div class="flex flex-col gap-1.5">
+                <label class="text-slate-500">Dirección</label>
+                <input type="text" [(ngModel)]="complexFormAddress" placeholder="Av. Los Deportistas 1240" class="bg-slate-50 border border-slate-200 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-xl p-2.5 outline-none font-semibold text-slate-700 transition-all">
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <label class="text-slate-500">Distrito</label>
+                <input type="text" [(ngModel)]="complexFormDistrict" placeholder="Lima Norte" class="bg-slate-50 border border-slate-200 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-xl p-2.5 outline-none font-semibold text-slate-700 transition-all">
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs font-semibold">
+              <div class="flex flex-col gap-1.5">
+                <label class="text-slate-500">Rango de Horarios</label>
+                <input type="text" [(ngModel)]="complexFormTimeRange" placeholder="7:00 am - 10:00 pm" class="bg-slate-50 border border-slate-200 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-xl p-2.5 outline-none font-semibold text-slate-700 transition-all">
+              </div>
+              <div class="flex flex-col gap-1.5">
+                <label class="text-slate-500">URL de Imagen de Portada</label>
+                <input type="text" [(ngModel)]="complexFormImage" placeholder="https://..." class="bg-slate-50 border border-slate-200 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500 rounded-xl p-2.5 outline-none font-semibold text-slate-700 transition-all">
+              </div>
+            </div>
+
+            <!-- Toggle Visibilidad / Active State -->
+            <div class="border-t border-slate-100 pt-5 space-y-3">
+              <span class="block text-[10px] font-bold text-slate-400 tracking-wider uppercase">Estado de Visibilidad (Clientes)</span>
+              
+              <div class="flex items-center justify-between p-4 rounded-2xl border transition-all"
+                   [ngClass]="complexFormActive ? 'bg-emerald-50/50 border-emerald-200 text-emerald-800' : 'bg-slate-50 border-slate-200 text-slate-500'">
+                <div class="space-y-0.5 pr-4">
+                  <h4 class="text-xs font-bold">{{ complexFormActive ? 'Local Habilitado' : 'Local Deshabilitado' }}</h4>
+                  <p class="text-[10px] font-medium opacity-80">
+                    {{ complexFormActive ? 'Los clientes pueden buscar tu local, ver tus canchas y realizar reservas en tiempo real.' : 'Tu local y sus canchas estarán ocultos. Los clientes no podrán encontrarlos ni hacer nuevas reservas.' }}
+                  </p>
+                </div>
+                
+                <!-- Toggle switch styling -->
+                <button type="button" 
+                        (click)="complexFormActive = !complexFormActive" 
+                        class="w-12 h-6 rounded-full p-0.5 transition-colors cursor-pointer border-none outline-none flex items-center"
+                        [ngClass]="complexFormActive ? 'bg-[#00a775] justify-end' : 'bg-slate-300 justify-start'">
+                  <span class="w-5 h-5 rounded-full bg-white shadow-xs"></span>
+                </button>
+              </div>
+            </div>
+
+            <div class="pt-2">
+              <button 
+                (click)="saveComplexChanges()"
+                class="bg-[#00a775] hover:bg-[#009468] text-white font-extrabold py-3 px-6 rounded-xl text-xs transition-all shadow-sm border-none cursor-pointer flex items-center gap-1.5"
+              >
+                <i class="pi pi-save text-xs"></i> Guardar Cambios
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Live Client Preview Card -->
+        <div class="space-y-4">
+          <span class="block text-[10px] font-bold text-slate-400 tracking-wider uppercase pl-2">Vista Previa del Cliente</span>
+          
+          <div class="bg-white rounded-3xl overflow-hidden border border-slate-100 shadow-md relative group select-none">
+            <!-- Badges -->
+            <div class="absolute top-3 left-3 z-10">
+              <span class="bg-[#3b82f6] text-white text-[9px] font-extrabold px-3 py-1 rounded-full shadow-xs uppercase tracking-wider flex items-center gap-1">
+                ⚽ Deportes
+              </span>
+            </div>
+            
+            <div class="absolute top-3 right-3 z-10" *ngIf="!complexFormActive">
+              <span class="bg-rose-500 text-white text-[9px] font-extrabold px-3 py-1 rounded-full shadow-xs uppercase tracking-wider">
+                Oculto
+              </span>
+            </div>
+
+            <!-- Image Cover -->
+            <div class="w-full h-44 bg-slate-100 overflow-hidden relative">
+              <img [src]="complexFormImage || 'https://images.unsplash.com/photo-1544698310-74ea9d1c8258?q=80&w=400'" 
+                   alt="Preview Image" 
+                   class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+              <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+              <div class="absolute bottom-3 right-3 text-white text-[11px] font-extrabold bg-black/60 px-3 py-1 rounded-lg backdrop-blur-xs">
+                S/ 80.00/h
+              </div>
+            </div>
+
+            <!-- Info Container -->
+            <div class="p-5 space-y-3.5">
+              <div>
+                <h3 class="text-sm font-extrabold text-slate-800 tracking-tight leading-snug">{{ complexFormName || 'Nombre de tu Complejo' }}</h3>
+                <div class="flex items-center gap-1 text-[10px] text-slate-400 font-semibold mt-1">
+                  <i class="pi pi-map-marker text-rose-500"></i>
+                  <span>{{ complexFormAddress || 'Dirección del complejo' }}, {{ complexFormDistrict || 'Distrito' }}</span>
+                </div>
+              </div>
+
+              <div class="flex items-center justify-between text-[10px] font-bold text-slate-500 border-t border-slate-50 pt-3">
+                <div class="flex items-center gap-1">
+                  <i class="pi pi-star-fill text-amber-500"></i>
+                  <span class="text-slate-800">4.5</span>
+                  <span class="text-slate-400 font-semibold">(0 valoraciones)</span>
+                </div>
+                <div class="flex items-center gap-1">
+                  <i class="pi pi-phone text-emerald-500"></i>
+                  <span>{{ complexFormPhone || 'Teléfono' }}</span>
+                </div>
+              </div>
+
+              <div class="flex items-center gap-1 text-[10px] text-slate-500 font-semibold pt-1">
+                <i class="pi pi-clock text-[#00a775]"></i>
+                <span>{{ complexFormTimeRange || '08:00 am - 10:00 pm' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- SECTION: RESERVAS (WEEKLY GRID EDIT) -->
+    <div *ngIf="activeSection === 'scheduler'" class="max-w-5xl mx-auto space-y-6">
+      
+      <!-- Page Header -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Reservas</h1>
+          <p class="text-xs text-slate-500 mt-1 font-medium">Haz clic en un slot para cambiar su estado: Libre → Ocupado → Reservado</p>
+        </div>
+        <button 
+          (click)="saveScheduleChanges()"
+          class="bg-[#00a775] hover:bg-[#009468] text-white font-extrabold py-2.5 px-6 rounded-xl text-xs transition-all shadow-sm border-none cursor-pointer flex items-center gap-1.5"
+        >
+          <i class="pi pi-save text-[10px]"></i> Guardar cambios
+        </button>
+      </div>
+
+      <!-- Canchas / Pitches Tab Pill List Selector -->
+      <div class="flex flex-wrap items-center gap-2">
+        <button 
+          *ngFor="let pitch of myPitches"
+          (click)="selectPitchForGrid(pitch)"
+          [class]="selectedPitchForSchedule?.id === pitch.id ? 'bg-[#00a775] text-white shadow-sm font-extrabold' : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 font-medium'"
+          class="px-4 py-2 rounded-2xl text-xs transition-all cursor-pointer outline-none"
+        >
+          {{ pitch.name }}
+        </button>
+      </div>
+
+      <!-- Grid Legend -->
+      <div class="flex items-center gap-4 text-[10px] font-bold text-slate-500">
+        <span class="flex items-center gap-1.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#10b981]"></span> Libre
+        </span>
+        <span class="flex items-center gap-1.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#ef4444]"></span> Ocupado
+        </span>
+        <span class="flex items-center gap-1.5">
+          <span class="w-2.5 h-2.5 rounded-full bg-[#fbbf24]"></span> Reservado
+        </span>
+      </div>
+
+      <!-- Grid Availability Matrix Table -->
+      <div *ngIf="selectedPitchForSchedule" class="overflow-x-auto bg-white rounded-3xl border border-slate-100 shadow-sm p-4 animate-fade-in">
+        <table class="w-full text-center border-collapse min-w-[700px] table-fixed">
+          <thead>
+            <tr class="bg-[#052820] text-white">
+              <th class="py-3 px-2 text-xs font-bold rounded-l-2xl uppercase tracking-wider w-24">Hora</th>
+              <th *ngFor="let wDate of weekDates" class="py-3 px-2 text-xs font-bold uppercase tracking-wider">
+                {{ wDate.dayName }}
+                <span class="block text-[9px] text-emerald-200/60 font-medium mt-0.5">{{ wDate.date | date:'dd/MM' }}</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <tr *ngFor="let row of scheduleRows" class="hover:bg-slate-50/20 transition-all">
+              
+              <!-- Hour Label -->
+              <td class="py-3.5 px-2 text-xs font-bold text-slate-500 bg-slate-50/20 border-r border-slate-50">{{ row.hourLabel }}</td>
+              
+              <!-- Cells toggler buttons -->
+              <td *ngFor="let cell of row.cells" class="py-1.5 px-1">
+                <button 
+                  (click)="onCellToggle(cell)"
+                  [ngClass]="{
+                    'bg-[#ecfdf5] border-[#a7f3d0] text-[#047857] hover:bg-[#d1fae5] hover:border-[#34d399]': cell.status === 'Libre',
+                    'bg-[#fef2f2] border-[#fecaca] text-[#b91c1c] hover:bg-[#fee2e2] hover:border-[#fca5a5]': cell.status === 'Ocupado',
+                    'bg-[#fffbeb] border-[#fef3c7] text-[#b45309] hover:bg-[#fef3c7] hover:border-[#fcd34d]': cell.status === 'Reservado'
+                  }"
+                  class="w-full py-2 px-1 text-center font-bold text-[10px] rounded-xl border transition-all duration-200 select-none outline-none cursor-pointer"
+                >
+                  {{ cell.status }}
+                </button>
+              </td>
+
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <!-- SECTION: INVENTARIO (INVENTORY MANAGEMENT) -->
+    <div *ngIf="activeSection === 'inventory'" class="max-w-5xl mx-auto space-y-6">
+      
+      <!-- Page Header -->
+      <div>
+        <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Inventario</h1>
+        <p class="text-xs text-slate-500 mt-1 font-medium">Gestiona tus productos y equipamiento</p>
+      </div>
+
+      <!-- Add Product Panel Box -->
+      <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-4">
+        <span class="block text-[10px] font-bold text-slate-400 tracking-wider uppercase">Agregar Producto</span>
+        
+        <div class="grid grid-cols-2 md:grid-cols-6 gap-3.5 text-xs font-semibold">
+          <div class="flex flex-col gap-1 md:col-span-2">
+            <label class="text-slate-500">Nombre</label>
+            <input type="text" [(ngModel)]="prodName" placeholder="Balón de fútbol" class="bg-slate-50 border border-slate-200 focus:border-emerald-500 rounded-xl p-2.5 outline-none font-semibold text-slate-700">
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-slate-500">Categoría</label>
+            <select [(ngModel)]="prodCategory" class="bg-slate-50 border border-slate-200 focus:border-emerald-500 rounded-xl p-2.5 outline-none font-semibold text-slate-700 cursor-pointer">
+              <option value="Equipamiento">Equipamiento</option>
+              <option value="Bebidas">Bebidas</option>
+              <option value="Mantenimiento">Mantenimiento</option>
+            </select>
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-slate-500">Cantidad</label>
+            <input type="number" [(ngModel)]="prodQuantity" class="bg-slate-50 border border-slate-200 focus:border-emerald-500 rounded-xl p-2.5 outline-none font-semibold text-slate-700">
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-slate-500">Unidad</label>
+            <input type="text" [(ngModel)]="prodUnit" placeholder="unidades" class="bg-slate-50 border border-slate-200 focus:border-emerald-500 rounded-xl p-2.5 outline-none font-semibold text-slate-700">
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-slate-500">Stock mínimo</label>
+            <input type="number" [(ngModel)]="prodMinStock" class="bg-slate-50 border border-slate-200 focus:border-emerald-500 rounded-xl p-2.5 outline-none font-semibold text-slate-700">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-6 gap-3.5 text-xs font-semibold">
+          <div class="flex flex-col gap-1">
+            <label class="text-slate-500">Costo (S/)</label>
+            <input type="number" [(ngModel)]="prodCost" class="bg-slate-50 border border-slate-200 focus:border-emerald-500 rounded-xl p-2.5 outline-none font-semibold text-slate-700">
+          </div>
+        </div>
+
+        <button 
+          (click)="addProduct()"
+          class="bg-[#00a775] hover:bg-[#009468] text-white font-extrabold py-2.5 px-6 rounded-xl text-xs transition-all shadow-sm border-none cursor-pointer flex items-center gap-1.5"
+        >
+          <i class="pi pi-plus text-[10px]"></i> Agregar
+        </button>
+      </div>
+
+      <!-- Product List Table Grid -->
+      <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-4 overflow-x-auto">
+        <table class="w-full text-left text-xs border-collapse min-w-[650px]">
+          <thead>
+            <tr class="text-slate-400 uppercase tracking-wider border-b border-slate-100 text-[10px] font-bold">
+              <th class="pb-3 pl-4">Producto</th>
+              <th class="pb-3">Categoría</th>
+              <th class="pb-3">Cantidad</th>
+              <th class="pb-3">Mínimo</th>
+              <th class="pb-3">Costo</th>
+              <th class="pb-3">Estado</th>
+              <th class="pb-3 text-right pr-4">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 font-semibold text-slate-700">
+            <tr *ngFor="let p of inventoryProducts" class="hover:bg-slate-50/40">
+              <td class="py-3.5 pl-4 font-bold text-slate-800">{{ p.name }}</td>
+              <td class="py-3.5 text-slate-500">{{ p.category }}</td>
+              <td class="py-3.5 font-bold">{{ p.quantity }} <span class="text-slate-400 font-normal">{{ p.unit }}</span></td>
+              <td class="py-3.5 text-slate-500">{{ p.minStock }}</td>
+              <td class="py-3.5 font-bold">S/ {{ p.cost | number:'1.2-2' }}</td>
+              <td class="py-3.5">
+                <span 
+                  [ngClass]="{
+                    'bg-emerald-50 text-emerald-600 border-emerald-100': p.status === 'OK',
+                    'bg-amber-50 text-amber-600 border-amber-100': p.status === 'Bajo Stock',
+                    'bg-rose-50 text-rose-600 border-rose-100': p.status === 'Agotado'
+                  }"
+                  class="px-2.5 py-0.5 rounded-full text-[9px] font-bold border inline-block select-none"
+                >
+                  {{ p.status }}
+                </span>
+              </td>
+              <td class="py-3.5 text-right pr-4">
+                <button (click)="deleteProduct(p.id)" class="bg-transparent border-none text-slate-300 hover:text-rose-500 p-1 cursor-pointer transition-all outline-none" title="Eliminar producto">
+                  <i class="pi pi-trash text-xs"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <!-- SECTION: GASTOS (EXPENSES REGISTRY) -->
+    <div *ngIf="activeSection === 'expenses'" class="max-w-5xl mx-auto space-y-6">
+      
+      <!-- Page Header -->
+      <div>
+        <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Gastos</h1>
+        <p class="text-xs text-slate-500 mt-1 font-medium">Registra todos los gastos de tu local</p>
+      </div>
+
+      <!-- 4 Red Metrics Sub-category Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-[#fff5f5] rounded-2xl p-4 border border-red-100 shadow-xs flex flex-col justify-between">
+          <span class="text-[9px] font-bold text-red-500 uppercase tracking-wider">Servicios</span>
+          <h3 class="text-lg font-extrabold text-red-600 mt-1.5">S/ {{ expenseServiciosTotal | number:'1.2-2' }}</h3>
+        </div>
+        <div class="bg-[#fff5f5] rounded-2xl p-4 border border-red-100 shadow-xs flex flex-col justify-between">
+          <span class="text-[9px] font-bold text-red-500 uppercase tracking-wider">Mantenimiento</span>
+          <h3 class="text-lg font-extrabold text-red-600 mt-1.5">S/ {{ expenseMantenimientoTotal | number:'1.2-2' }}</h3>
+        </div>
+        <div class="bg-[#fff5f5] rounded-2xl p-4 border border-red-100 shadow-xs flex flex-col justify-between">
+          <span class="text-[9px] font-bold text-red-500 uppercase tracking-wider">Personal</span>
+          <h3 class="text-lg font-extrabold text-red-600 mt-1.5">S/ {{ expensePersonalTotal | number:'1.2-2' }}</h3>
+        </div>
+        <div class="bg-[#fff5f5] rounded-2xl p-4 border border-red-100 shadow-xs flex flex-col justify-between">
+          <span class="text-[9px] font-bold text-red-500 uppercase tracking-wider">Equipamiento</span>
+          <h3 class="text-lg font-extrabold text-red-600 mt-1.5">S/ {{ expenseEquipamientoTotal | number:'1.2-2' }}</h3>
+        </div>
+      </div>
+
+      <!-- Register Gasto Form -->
+      <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-4">
+        <span class="block text-[10px] font-bold text-slate-400 tracking-wider uppercase">Registrar Gasto</span>
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3.5 text-xs font-semibold">
+          <div class="flex flex-col gap-1">
+            <label class="text-slate-500">Fecha</label>
+            <input type="date" [(ngModel)]="expenseDate" class="bg-slate-50 border border-slate-200 focus:border-emerald-500 rounded-xl p-2.5 outline-none font-semibold text-slate-700">
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-slate-500">Categoría</label>
+            <select [(ngModel)]="expenseCategory" class="bg-slate-50 border border-slate-200 focus:border-emerald-500 rounded-xl p-2.5 outline-none font-semibold text-slate-700 cursor-pointer">
+              <option value="Servicios">Servicios</option>
+              <option value="Mantenimiento">Mantenimiento</option>
+              <option value="Personal">Personal</option>
+              <option value="Equipamiento">Equipamiento</option>
+            </select>
+          </div>
+          <div class="flex flex-col gap-1 md:col-span-2">
+            <label class="text-slate-500">Descripción</label>
+            <input type="text" [(ngModel)]="expenseDescription" placeholder="Pago de luz" class="bg-slate-50 border border-slate-200 focus:border-emerald-500 rounded-xl p-2.5 outline-none font-semibold text-slate-700">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3.5 text-xs font-semibold">
+          <div class="flex flex-col gap-1">
+            <label class="text-slate-500">Monto (S/)</label>
+            <input type="number" [(ngModel)]="txAmount" class="bg-slate-50 border border-slate-200 focus:border-emerald-500 rounded-xl p-2.5 outline-none font-semibold text-slate-700">
+          </div>
+        </div>
+
+        <button 
+          (click)="saveExpense()"
+          class="bg-[#ef4444] hover:bg-[#dc2626] text-white font-extrabold py-2.5 px-6 rounded-xl text-xs transition-all shadow-sm border-none cursor-pointer flex items-center gap-1.5"
+        >
+          <i class="pi pi-plus text-[10px]"></i> Registrar gasto
+        </button>
+      </div>
+
+      <!-- Expense History Table List -->
+      <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-6">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3.5 mb-4">
+          <h3 class="text-sm font-extrabold text-slate-800">Historial de gastos</h3>
+          <span class="text-xs font-extrabold text-red-600">Total: S/ {{ totalExpensesCalculated | number:'1.2-2' }}</span>
+        </div>
+
+        <table class="w-full text-left text-xs border-collapse min-w-[500px]">
+          <thead>
+            <tr class="text-slate-400 uppercase tracking-wider border-b border-slate-100 text-[10px] font-bold">
+              <th class="pb-3 pl-4">Fecha</th>
+              <th class="pb-3">Categoría</th>
+              <th class="pb-3">Descripción</th>
+              <th class="pb-3">Monto</th>
+              <th class="pb-3 text-right pr-4">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 font-semibold text-slate-700">
+            <tr *ngFor="let exp of expensesList" class="hover:bg-slate-50/40">
+              <td class="py-3.5 pl-4 text-slate-500">{{ exp.date }}</td>
+              <td class="py-3.5">
+                <span class="bg-red-50 text-red-500 border border-red-100 px-2 py-0.5 rounded-full text-[9px] font-bold select-none">
+                  {{ exp.category }}
+                </span>
+              </td>
+              <td class="py-3.5 font-bold text-slate-800">{{ exp.description }}</td>
+              <td class="py-3.5 font-extrabold text-red-600">S/ {{ exp.amount | number:'1.2-2' }}</td>
+              <td class="py-3.5 text-right pr-4">
+                <button (click)="deleteExpense(exp.id)" class="bg-transparent border-none text-slate-300 hover:text-rose-500 p-1 cursor-pointer transition-all outline-none" title="Eliminar gasto">
+                  <i class="pi pi-trash text-xs"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <!-- SECTION: INGRESOS (INCOMES REGISTRY) -->
+    <div *ngIf="activeSection === 'incomes'" class="max-w-5xl mx-auto space-y-6">
+      
+      <!-- Page Header -->
+      <div>
+        <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Ingresos</h1>
+        <p class="text-xs text-slate-500 mt-1 font-medium">Registra todos los cobros de tu local</p>
+      </div>
+
+      <!-- Register Ingreso Form -->
+      <div class="bg-white rounded-3xl p-6 border border-slate-100 shadow-sm space-y-4">
+        <span class="block text-[10px] font-bold text-slate-400 tracking-wider uppercase">Registrar Ingreso</span>
+        
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3.5 text-xs font-semibold">
+          <div class="flex flex-col gap-1">
+            <label class="text-slate-500">Fecha</label>
+            <input type="date" [(ngModel)]="incomeDate" class="bg-slate-50 border border-slate-200 focus:border-emerald-500 rounded-xl p-2.5 outline-none font-semibold text-slate-700">
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-slate-500">Tipo</label>
+            <select [(ngModel)]="incomeType" class="bg-slate-50 border border-slate-200 focus:border-emerald-500 rounded-xl p-2.5 outline-none font-semibold text-slate-700 cursor-pointer">
+              <option value="Cancha">Cancha</option>
+              <option value="Bebidas">Bebidas</option>
+              <option value="Equipamiento">Equipamiento</option>
+            </select>
+          </div>
+          <div class="flex flex-col gap-1">
+            <label class="text-slate-500">Cancha (opcional)</label>
+            <select [(ngModel)]="incomePitchId" class="bg-slate-50 border border-slate-200 focus:border-emerald-500 rounded-xl p-2.5 outline-none font-semibold text-slate-700 cursor-pointer">
+              <option value="—">—</option>
+              <option *ngFor="let pitch of myPitches" [value]="pitch.name">{{ pitch.name }}</option>
+            </select>
+          </div>
+          <div class="flex flex-col gap-1 md:col-span-2">
+            <label class="text-slate-500">Descripción</label>
+            <input type="text" [(ngModel)]="incomeDescription" placeholder="Cancha 1 — 08:00 a 09:00" class="bg-slate-50 border border-slate-200 focus:border-emerald-500 rounded-xl p-2.5 outline-none font-semibold text-slate-700">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3.5 text-xs font-semibold">
+          <div class="flex flex-col gap-1">
+            <label class="text-slate-500">Monto (S/)</label>
+            <input type="number" [(ngModel)]="incomeAmount" class="bg-slate-50 border border-slate-200 focus:border-emerald-500 rounded-xl p-2.5 outline-none font-semibold text-slate-700">
+          </div>
+        </div>
+
+        <button 
+          (click)="saveIncome()"
+          class="bg-[#00a775] hover:bg-[#009468] text-white font-extrabold py-2.5 px-6 rounded-xl text-xs transition-all shadow-sm border-none cursor-pointer flex items-center gap-1.5"
+        >
+          <i class="pi pi-plus text-[10px]"></i> Registrar ingreso
+        </button>
+      </div>
+
+      <!-- Income History Table List -->
+      <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-6">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3.5 mb-4">
+          <h3 class="text-sm font-extrabold text-slate-800">Historial de ingresos</h3>
+          <span class="text-xs font-extrabold text-emerald-600">Total: S/ {{ totalIncomesCalculated | number:'1.2-2' }}</span>
+        </div>
+
+        <table class="w-full text-left text-xs border-collapse min-w-[500px]">
+          <thead>
+            <tr class="text-slate-400 uppercase tracking-wider border-b border-slate-100 text-[10px] font-bold">
+              <th class="pb-3 pl-4">Fecha</th>
+              <th class="pb-3">Tipo</th>
+              <th class="pb-3">Descripción</th>
+              <th class="pb-3">Cancha</th>
+              <th class="pb-3">Monto</th>
+              <th class="pb-3 text-right pr-4">Acciones</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 font-semibold text-slate-700">
+            <tr *ngFor="let inc of incomesList" class="hover:bg-slate-50/40">
+              <td class="py-3.5 pl-4 text-slate-500">{{ inc.date }}</td>
+              <td class="py-3.5">
+                <span class="bg-[#e6f7f2] text-emerald-600 border border-emerald-100 px-2 py-0.5 rounded-full text-[9px] font-bold select-none uppercase">
+                  {{ inc.sub }}
+                </span>
+              </td>
+              <td class="py-3.5 font-bold text-slate-800">{{ inc.description }}</td>
+              <td class="py-3.5 text-slate-500">{{ inc.canchaName }}</td>
+              <td class="py-3.5 font-extrabold text-emerald-600">S/ {{ inc.amount | number:'1.2-2' }}</td>
+              <td class="py-3.5 text-right pr-4">
+                <button *ngIf="inc.id" (click)="deleteIncome(inc.id)" class="bg-transparent border-none text-slate-300 hover:text-rose-500 p-1 cursor-pointer transition-all outline-none" title="Eliminar ingreso">
+                  <i class="pi pi-trash text-xs"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <!-- SECTION: CIERRE DE CAJA (CASH CLOSURE) -->
+    <div *ngIf="activeSection === 'closure'" class="max-w-5xl mx-auto space-y-6 animate-fade-in">
+      
+      <!-- Page Header -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Cierre de Caja</h1>
+          <p class="text-xs text-slate-500 mt-1 font-medium">Resumen del día — {{ closureDate }}</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <label class="text-xs text-slate-500 font-bold">Fecha de Cierre:</label>
+          <input 
+            type="date" 
+            [(ngModel)]="closureDate" 
+            (change)="calculateClosureDetails()"
+            class="bg-white border border-slate-200 focus:border-emerald-500 rounded-xl p-2 outline-none font-semibold text-slate-700 text-xs cursor-pointer"
+          >
+        </div>
+      </div>
+
+      <!-- 3 Metrics Cards Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Card 1: Total Ingresos -->
+        <div class="bg-white border-t-4 border-[#00a775] rounded-2xl p-5 shadow-sm flex items-center justify-between">
+          <div>
+            <span class="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Total Ingresos</span>
+            <h2 class="text-xl font-extrabold text-slate-800 mt-1">S/ {{ closureIncomesTotal | number:'1.2-2' }}</h2>
+          </div>
+          <div class="w-9 h-9 rounded-full bg-[#00a775]/10 text-[#00a775] flex items-center justify-center text-xs">
+            <i class="pi pi-chart-line"></i>
+          </div>
+        </div>
+
+        <!-- Card 2: Total Gastos -->
+        <div class="bg-white border-t-4 border-[#ef4444] rounded-2xl p-5 shadow-sm flex items-center justify-between">
+          <div>
+            <span class="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Total Gastos</span>
+            <h2 class="text-xl font-extrabold text-slate-800 mt-1">S/ {{ closureExpensesTotal | number:'1.2-2' }}</h2>
+          </div>
+          <div class="w-9 h-9 rounded-full bg-[#ef4444]/10 text-[#ef4444] flex items-center justify-center text-xs">
+            <i class="pi pi-chart-line rotate-180"></i>
+          </div>
+        </div>
+
+        <!-- Card 3: Neto del Día -->
+        <div class="bg-white border-t-4 border-[#3b82f6] rounded-2xl p-5 shadow-sm flex items-center justify-between">
+          <div>
+            <span class="text-[9px] text-slate-400 uppercase font-bold tracking-wider">Neto del Día</span>
+            <h2 class="text-xl font-extrabold text-slate-800 mt-1">S/ {{ closureNetBalance | number:'1.2-2' }}</h2>
+          </div>
+          <div class="w-9 h-9 rounded-full bg-[#3b82f6]/10 text-[#3b82f6] flex items-center justify-center text-xs">
+            <i class="pi pi-wallet"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- Split details grid (2 columns) -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- Column 1: Ingresos del día -->
+        <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-6 flex flex-col justify-between">
+          <div>
+            <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider mb-4 border-b border-slate-100 pb-3">Ingresos del día</h3>
+            <div class="divide-y divide-slate-100 max-h-72 overflow-y-auto">
+              <div *ngFor="let inc of closureIncomesList" class="py-3 flex items-center justify-between text-xs">
+                <span class="font-bold text-slate-700">{{ inc.description }}</span>
+                <span class="font-extrabold text-emerald-600">S/ {{ inc.amount | number:'1.2-2' }}</span>
+              </div>
+              <div *ngIf="closureIncomesList.length === 0" class="py-8 text-center text-slate-400 text-xs">
+                No se registraron ingresos en esta fecha.
+              </div>
+            </div>
+          </div>
+          <div class="border-t border-slate-100 pt-3 mt-4 flex items-center justify-between text-xs font-extrabold text-emerald-600">
+            <span>Total</span>
+            <span>S/ {{ closureIncomesTotal | number:'1.2-2' }}</span>
+          </div>
+        </div>
+
+        <!-- Column 2: Gastos del día -->
+        <div class="bg-white rounded-3xl border border-slate-100 shadow-sm p-6 flex flex-col justify-between">
+          <div>
+            <h3 class="text-xs font-extrabold text-slate-800 uppercase tracking-wider mb-4 border-b border-slate-100 pb-3">Gastos del día</h3>
+            <div class="divide-y divide-slate-100 max-h-72 overflow-y-auto">
+              <div *ngFor="let exp of closureExpensesList" class="py-3 flex items-center justify-between text-xs">
+                <span class="font-bold text-slate-700">{{ exp.description }}</span>
+                <span class="font-extrabold text-rose-600">S/ {{ exp.amount | number:'1.2-2' }}</span>
+              </div>
+              <div *ngIf="closureExpensesList.length === 0" class="py-8 text-center text-slate-400 text-xs">
+                No se registraron gastos en esta fecha.
+              </div>
+            </div>
+          </div>
+          <div class="border-t border-slate-100 pt-3 mt-4 flex items-center justify-between text-xs font-extrabold text-rose-600">
+            <span>Total</span>
+            <span>S/ {{ closureExpensesTotal | number:'1.2-2' }}</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom Bar: NETO DEL DÍA closure -->
+      <div class="bg-slate-900 rounded-3xl p-6 flex items-center justify-between shadow-lg text-white">
+        <div>
+          <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Neto del Día</span>
+          <h2 class="text-3xl font-extrabold mt-1 text-white">S/ {{ closureNetBalance | number:'1.2-2' }}</h2>
+        </div>
+        <button 
+          (click)="saveClosure()"
+          class="bg-[#00a775] hover:bg-[#009468] text-white font-extrabold py-3 px-8 rounded-xl text-xs transition-all shadow-md border-none cursor-pointer flex items-center gap-2"
+        >
+          <i class="pi pi-lock text-[10px]"></i> Cerrar Caja
+        </button>
+      </div>
+
+    </div>
+
+  </main>
+</div>

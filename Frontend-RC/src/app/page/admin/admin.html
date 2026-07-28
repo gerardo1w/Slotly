@@ -1,0 +1,239 @@
+<div class="min-h-screen bg-[#0b111e] text-gray-100 pb-12 animate-fade-in">
+  <!-- Top Navigation Bar -->
+  <header class="bg-[#151c2c] border-b border-gray-800 sticky top-0 z-30 shadow-lg px-4 md:px-8 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-full bg-red-500/20 text-red-400 border border-red-500/30 flex items-center justify-center shadow-lg shadow-red-500/10">
+        <i class="pi pi-shield text-lg"></i>
+      </div>
+      <div>
+        <h1 class="text-base font-bold text-gray-100 leading-tight">
+          Panel de Administración
+        </h1>
+        <p class="text-[10px] text-gray-400 mt-0.5">Control del Sistema CanchaCraft</p>
+      </div>
+    </div>
+
+    <!-- Center Menu Links -->
+    <nav class="hidden md:flex bg-[#0b111e] p-1 rounded-lg border border-gray-800 gap-1 text-xs">
+      <button
+        (click)="activeSection = 'dashboard'"
+        [class]="activeSection === 'dashboard' ? 'bg-red-600 text-white font-semibold' : 'text-gray-400 hover:text-gray-200'"
+        class="px-4 py-1.5 rounded-md transition-all outline-none"
+      >
+        Métricas Globales
+      </button>
+      <button
+        (click)="activeSection = 'moderation'"
+        [class]="activeSection === 'moderation' ? 'bg-red-600 text-white font-semibold' : 'text-gray-400 hover:text-gray-200'"
+        class="px-4 py-1.5 rounded-md transition-all outline-none"
+      >
+        Aprobar Complejos
+        <span *ngIf="pendingComplexesCount > 0" class="ml-1 px-1.5 py-0.5 text-[9px] bg-red-500 text-white rounded-full font-bold">
+          {{ pendingComplexesCount }}
+        </span>
+      </button>
+      <button
+        (click)="activeSection = 'users'"
+        [class]="activeSection === 'users' ? 'bg-red-600 text-white font-semibold' : 'text-gray-400 hover:text-gray-200'"
+        class="px-4 py-1.5 rounded-md transition-all outline-none"
+      >
+        Directorio de Usuarios
+      </button>
+    </nav>
+  </header>
+
+  <!-- Mobile Navigation -->
+  <div class="md:hidden flex bg-[#151c2c] border-b border-gray-800 p-2 text-[10px] justify-around">
+    <button (click)="activeSection = 'dashboard'" [class]="activeSection === 'dashboard' ? 'text-red-400 font-bold' : 'text-gray-400'" class="p-2 transition-all outline-none">Métricas</button>
+    <button (click)="activeSection = 'moderation'" [class]="activeSection === 'moderation' ? 'text-red-400 font-bold' : 'text-gray-400'" class="p-2 transition-all outline-none">
+      Aprobar ({{ pendingComplexesCount }})
+    </button>
+    <button (click)="activeSection = 'users'" [class]="activeSection === 'users' ? 'text-red-400 font-bold' : 'text-gray-400'" class="p-2 transition-all outline-none">Usuarios</button>
+  </div>
+
+  <!-- Global Alerts -->
+  <div class="max-w-7xl mx-auto px-4 mt-6">
+    <div *ngIf="infoMessage" class="p-4 rounded-lg bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 flex items-center gap-3 animate-fade-in">
+      <i class="pi pi-check-circle text-lg"></i>
+      <span>{{ infoMessage }}</span>
+    </div>
+  </div>
+
+  <!-- SECTION: METRICS DASHBOARD -->
+  <div *ngIf="activeSection === 'dashboard'" class="max-w-7xl mx-auto px-4 mt-6 space-y-6">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div class="bg-[#151c2c] border border-gray-800 rounded-xl p-6 shadow-lg flex items-center justify-between">
+        <div>
+          <span class="text-xs text-gray-500 uppercase font-semibold">Usuarios Registrados</span>
+          <h2 class="text-3xl font-extrabold text-gray-100 mt-1">{{ totalRegisteredUsers }}</h2>
+          <span class="text-[10px] text-gray-400 block mt-2">Clientes, Dueños y Admins</span>
+        </div>
+        <div class="w-12 h-12 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center text-xl">
+          <i class="pi pi-users"></i>
+        </div>
+      </div>
+
+      <div class="bg-[#151c2c] border border-gray-800 rounded-xl p-6 shadow-lg flex items-center justify-between">
+        <div>
+          <span class="text-xs text-gray-500 uppercase font-semibold">Complejos Aprobados</span>
+          <h2 class="text-3xl font-extrabold text-emerald-400 mt-1">{{ approvedComplexesCount }}</h2>
+          <span class="text-[10px] text-gray-400 block mt-2">Activos en buscador</span>
+        </div>
+        <div class="w-12 h-12 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center text-xl">
+          <i class="pi pi-check-circle"></i>
+        </div>
+      </div>
+
+      <div class="bg-[#151c2c] border border-gray-800 rounded-xl p-6 shadow-lg flex items-center justify-between">
+        <div>
+          <span class="text-xs text-gray-500 uppercase font-semibold">Complejos Pendientes</span>
+          <h2 class="text-3xl font-extrabold text-yellow-500 mt-1">{{ pendingComplexesCount }}</h2>
+          <span class="text-[10px] text-gray-400 block mt-2">A la espera de aprobación</span>
+        </div>
+        <div class="w-12 h-12 rounded-lg bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 flex items-center justify-center text-xl">
+          <i class="pi pi-clock"></i>
+        </div>
+      </div>
+
+      <div class="bg-[#151c2c] border border-gray-800 rounded-xl p-6 shadow-lg flex items-center justify-between">
+        <div>
+          <span class="text-xs text-gray-500 uppercase font-semibold">Facturación Global</span>
+          <h2 class="text-3xl font-extrabold text-red-400 mt-1">S/. {{ globalBilling }}</h2>
+          <span class="text-[10px] text-gray-400 block mt-2">Total de reservas activas</span>
+        </div>
+        <div class="w-12 h-12 rounded-lg bg-red-500/10 text-red-400 border border-red-500/20 flex items-center justify-center text-xl">
+          <i class="pi pi-chart-line"></i>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-[#151c2c] border border-gray-800 rounded-xl p-6 shadow-lg space-y-2">
+      <h3 class="font-bold text-gray-200 text-sm">Resumen de Controles del Administrador</h3>
+      <p class="text-xs text-gray-450 leading-relaxed">
+        Como Administrador, puedes habilitar complejos pendientes en la pestaña <strong class="text-red-400">Aprobar Complejos</strong>, y auditar/bloquear temporalmente cuentas en <strong class="text-red-400">Directorio de Usuarios</strong>.
+      </p>
+    </div>
+  </div>
+
+  <!-- SECTION: APPROVE COMPLEXES -->
+  <div *ngIf="activeSection === 'moderation'" class="max-w-7xl mx-auto px-4 mt-6">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-bold text-gray-200">Complejos Deportivos en Espera</h2>
+    </div>
+
+    <!-- Empty moderation list -->
+    <div *ngIf="pendingComplexesCount === 0" class="bg-[#151c2c] border border-gray-800 rounded-xl p-12 text-center">
+      <div class="w-16 h-16 rounded-full bg-gray-800 flex items-center justify-center text-gray-600 mx-auto mb-4">
+        <i class="pi pi-thumbs-up text-3xl"></i>
+      </div>
+      <h3 class="text-lg font-semibold text-gray-400 mb-1">¡Al día! Todo aprobado</h3>
+      <p class="text-sm text-gray-500 max-w-md mx-auto">No existen complejos deportivos pendientes de aprobación de marca en este momento.</p>
+    </div>
+
+    <!-- Table -->
+    <div *ngIf="pendingComplexesCount > 0" class="bg-[#151c2c] border border-gray-800 rounded-xl overflow-hidden shadow-xl">
+      <p-table [value]="allComplexes" [responsiveLayout]="'scroll'" class="w-full text-sm">
+        <ng-template pTemplate="header">
+          <tr class="bg-[#0b111e] border-b border-gray-800 text-gray-400">
+            <th class="py-3.5 px-4 text-left font-bold uppercase tracking-wider text-xs">Nombre Complejo</th>
+            <th class="py-3.5 px-4 text-left font-bold uppercase tracking-wider text-xs">Distrito</th>
+            <th class="py-3.5 px-4 text-left font-bold uppercase tracking-wider text-xs">Dirección</th>
+            <th class="py-3.5 px-4 text-left font-bold uppercase tracking-wider text-xs">Teléfono</th>
+            <th class="py-3.5 px-4 text-center font-bold uppercase tracking-wider text-xs">Estado</th>
+            <th class="py-3.5 px-4 text-center font-bold uppercase tracking-wider text-xs">Acción</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-c>
+          <tr *ngIf="c.status === 'pending'" class="border-b border-gray-800 hover:bg-[#1f283d]/30 transition-all animate-fade-in">
+            <td class="py-4 px-4 font-bold text-gray-200">{{ c.name }}</td>
+            <td class="py-4 px-4 text-gray-300">{{ c.district }}</td>
+            <td class="py-4 px-4 text-gray-300">{{ c.address }}</td>
+            <td class="py-4 px-4 text-gray-300">{{ c.phone }}</td>
+            <td class="py-4 px-4 text-center">
+              <span class="px-2.5 py-0.5 rounded text-xs font-bold border bg-yellow-500/10 text-yellow-500 border-yellow-500/20">
+                Pendiente
+              </span>
+            </td>
+            <td class="py-4 px-4 text-center">
+              <button
+                (click)="approveComplex(c.id)"
+                class="px-3.5 py-1.5 rounded bg-emerald-600 hover:bg-emerald-500 border-none text-white text-xs font-bold transition-all cursor-pointer shadow-md"
+              >
+                Aprobar
+              </button>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+
+  <!-- SECTION: USERS DIRECTORY -->
+  <div *ngIf="activeSection === 'users'" class="max-w-7xl mx-auto px-4 mt-6">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-bold text-gray-200">Directorio General de Cuentas</h2>
+    </div>
+
+    <!-- Users Table -->
+    <div class="bg-[#151c2c] border border-gray-800 rounded-xl overflow-hidden shadow-xl">
+      <p-table [value]="allUsers" [responsiveLayout]="'scroll'" class="w-full text-sm">
+        <ng-template pTemplate="header">
+          <tr class="bg-[#0b111e] border-b border-gray-800 text-gray-400">
+            <th class="py-3.5 px-4 text-left font-bold uppercase tracking-wider text-xs">Nombre</th>
+            <th class="py-3.5 px-4 text-left font-bold uppercase tracking-wider text-xs">Correo Electrónico</th>
+            <th class="py-3.5 px-4 text-center font-bold uppercase tracking-wider text-xs">Rol</th>
+            <th class="py-3.5 px-4 text-center font-bold uppercase tracking-wider text-xs">Suscripción</th>
+            <th class="py-3.5 px-4 text-center font-bold uppercase tracking-wider text-xs">Estado</th>
+            <th class="py-3.5 px-4 text-center font-bold uppercase tracking-wider text-xs">Acción</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-u>
+          <tr class="border-b border-gray-800 hover:bg-[#1f283d]/30 transition-all">
+            <td class="py-4 px-4 font-semibold text-gray-200">{{ u.name }}</td>
+            <td class="py-4 px-4 text-gray-300">{{ u.email }}</td>
+            <td class="py-4 px-4 text-center">
+              <span
+                [class]="
+                  u.role === 'admin' ? 'bg-red-500/10 text-red-400 border-red-500/20' :
+                  u.role === 'owner' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' :
+                  'bg-blue-500/10 text-blue-400 border-blue-500/20'
+                "
+                class="px-2 py-0.5 rounded text-[10px] uppercase font-bold border"
+              >
+                {{ u.role === 'admin' ? 'Admin' : u.role === 'owner' ? 'Dueño' : 'Cliente' }}
+              </span>
+            </td>
+            <td class="py-4 px-4 text-center">
+              <span *ngIf="u.role === 'owner'"
+                [class]="u.subscription === 'pro' ? 'text-purple-400 bg-purple-500/10 border-purple-500/20' : 'text-gray-400 bg-gray-700/10 border-gray-750'"
+                class="px-2 py-0.5 rounded text-[10px] uppercase font-bold border"
+              >
+                {{ u.subscription }}
+              </span>
+              <span *ngIf="u.role !== 'owner'" class="text-gray-500">-</span>
+            </td>
+            <td class="py-4 px-4 text-center">
+              <span
+                [class]="u.blocked ? 'bg-red-500/15 text-red-400 border-red-500/20' : 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20'"
+                class="px-2.5 py-0.5 rounded text-xs font-bold border"
+              >
+                {{ u.blocked ? 'Bloqueado' : 'Activo' }}
+              </span>
+            </td>
+            <td class="py-4 px-4 text-center">
+              <button
+                *ngIf="u.role !== 'admin'"
+                (click)="toggleBlock(u.id)"
+                [class]="u.blocked ? 'bg-emerald-600/10 hover:bg-emerald-600/20 border-emerald-500/20 text-emerald-400' : 'bg-red-600/10 hover:bg-red-600/20 border-red-500/20 text-red-400'"
+                class="px-2.5 py-1.5 rounded border text-xs font-bold transition-all cursor-pointer"
+              >
+                {{ u.blocked ? 'Desbloquear' : 'Bloquear' }}
+              </button>
+              <span *ngIf="u.role === 'admin'" class="text-xs text-gray-500 font-semibold">-</span>
+            </td>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+  </div>
+</div>

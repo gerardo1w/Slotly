@@ -1,0 +1,211 @@
+<div class="flex flex-col lg:flex-row min-h-screen select-none font-sans overflow-x-hidden">
+  
+  <!-- Left Panel: Branding & Marketing (Green Gradient) -->
+  <div class="w-full lg:w-1/2 p-8 lg:p-16 flex flex-col justify-between text-white bg-gradient-to-br from-[#031d17] via-[#052820] to-[#07362a] relative overflow-hidden min-h-[450px] lg:min-h-screen">
+    <!-- Subtle Background Glows -->
+    <div class="absolute w-[300px] h-[300px] bg-emerald-500/10 rounded-full blur-[80px] -top-10 -left-10 pointer-events-none"></div>
+    <div class="absolute w-[400px] h-[400px] bg-emerald-400/5 rounded-full blur-[100px] -bottom-20 -right-20 pointer-events-none"></div>
+
+    <!-- Header Logo -->
+    <div class="flex items-center gap-3 z-10">
+      <div class="w-8 h-8 rounded-full bg-[#00a775] flex items-center justify-center text-white shadow-md shadow-emerald-900/30">
+        <i class="pi pi-bolt text-sm"></i>
+      </div>
+      <div>
+        <span class="text-lg font-bold text-white tracking-wide leading-none block">Slotly</span>
+        <span class="block text-[8px] tracking-wider text-[#00c58a]/70 font-semibold uppercase mt-0.5">Gestión de Canchas Deportivas</span>
+      </div>
+    </div>
+
+    <!-- Central Pitch Pitch Info -->
+    <div class="my-auto max-w-md py-12 lg:py-0 z-10 animate-fade-in">
+      <h1 class="text-4xl lg:text-5xl font-extrabold tracking-tight leading-tight text-white">
+        Gestiona <br>
+        <span class="text-[#00c58a]">cada cancha.</span>
+      </h1>
+      <p class="mt-4 text-xs lg:text-sm text-emerald-100/60 leading-relaxed font-light">
+        La plataforma todo-en-uno para publicar, reservar y administrar tu local deportivo.
+      </p>
+
+      <!-- Disciplines Grid -->
+      <div class="mt-8 grid grid-cols-3 gap-3">
+        <!-- Football -->
+        <div class="bg-[#052b23]/40 border border-emerald-800/35 rounded-xl p-3 flex items-center gap-2.5 transition-all hover:bg-[#052b23]/60">
+          <span class="text-xl">⚽</span>
+          <div>
+            <div class="text-xs font-semibold text-white">Fútbol</div>
+            <div class="text-[9px] text-emerald-300/50">4 locales</div>
+          </div>
+        </div>
+
+        <!-- Volleyball -->
+        <div class="bg-[#052b23]/40 border border-emerald-800/35 rounded-xl p-3 flex items-center gap-2.5 transition-all hover:bg-[#052b23]/60">
+          <span class="text-xl">🏐</span>
+          <div>
+            <div class="text-xs font-semibold text-white">Vóley</div>
+            <div class="text-[9px] text-emerald-300/50">3 locales</div>
+          </div>
+        </div>
+
+        <!-- Basketball -->
+        <div class="bg-[#052b23]/40 border border-emerald-800/35 rounded-xl p-3 flex items-center gap-2.5 transition-all hover:bg-[#052b23]/60">
+          <span class="text-xl">🏀</span>
+          <div>
+            <div class="text-xs font-semibold text-white">Básquet</div>
+            <div class="text-[9px] text-emerald-300/50">2 locales</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer Copyright -->
+    <div class="text-[10px] text-emerald-300/30 font-light mt-auto z-10">
+      © 2025 Slotly. Todos los derechos reservados.
+    </div>
+  </div>
+
+  <!-- Right Panel: Authentication Form (Light Gray) -->
+  <div class="w-full lg:w-1/2 p-8 lg:p-16 flex flex-col justify-center items-center bg-[#f0f4f8] relative min-h-screen">
+    
+    <!-- Form Card Container -->
+    <div class="w-full max-w-sm my-auto z-10 animate-fade-in">
+      
+      <!-- Headers -->
+      <div class="mb-6">
+        <h2 class="text-2xl font-extrabold text-slate-800 tracking-tight">
+          {{ isLogin ? 'Bienvenido' : 'Crear cuenta' }}
+        </h2>
+        <p class="text-slate-400 text-xs mt-1">
+          {{ isLogin ? 'Inicia sesión para acceder a tu cuenta.' : 'Regístrate para comenzar a gestionar o reservar.' }}
+        </p>
+      </div>
+
+      <!-- Feedback Banners -->
+      <div *ngIf="errorMessage"
+        class="mb-4 p-3 rounded-xl bg-rose-50 border border-rose-100 text-rose-600 text-xs flex items-center gap-2 animate-shake">
+        <i class="pi pi-exclamation-triangle text-sm"></i>
+        <span class="font-medium">{{ errorMessage }}</span>
+      </div>
+      <div *ngIf="successMessage"
+        class="mb-4 p-3 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-600 text-xs flex items-center gap-2">
+        <i class="pi pi-check-circle text-sm"></i>
+        <span class="font-medium">{{ successMessage }}</span>
+      </div>
+
+      <!-- Authentication Form -->
+      <form (submit)="onSubmit()" class="space-y-4">
+        
+        <!-- Name Field (Register Mode Only) -->
+        <div *ngIf="!isLogin" class="flex flex-col gap-1">
+          <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Nombre Completo</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+              <i class="pi pi-user text-xs"></i>
+            </span>
+            <input type="text" name="name" [(ngModel)]="name" placeholder="Ej. Juan Pérez"
+              class="w-full bg-white border border-slate-200/80 focus:border-[#00a775] text-slate-800 placeholder-slate-400/80 rounded-xl py-2.5 pl-9 pr-4 text-xs transition-all outline-none focus:ring-2 focus:ring-[#00a775]/10" />
+          </div>
+        </div>
+
+        <!-- Email Field -->
+        <div class="flex flex-col gap-1">
+          <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Correo electrónico</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+              <i class="pi pi-envelope text-xs"></i>
+            </span>
+            <input type="email" name="email" [(ngModel)]="email" placeholder="tu@correo.com"
+              class="w-full bg-white border border-slate-200/80 focus:border-[#00a775] text-slate-800 placeholder-slate-400/80 rounded-xl py-2.5 pl-9 pr-4 text-xs transition-all outline-none focus:ring-2 focus:ring-[#00a775]/10" />
+          </div>
+        </div>
+
+        <!-- Password Field -->
+        <div class="flex flex-col gap-1">
+          <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Contraseña</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+              <i class="pi pi-lock text-xs"></i>
+            </span>
+            <input [type]="showPassword ? 'text' : 'password'" name="password" [(ngModel)]="password" placeholder="••••••••"
+              class="w-full bg-white border border-slate-200/80 focus:border-[#00a775] text-slate-800 placeholder-slate-400/80 rounded-xl py-2.5 pl-9 pr-9 text-xs transition-all outline-none focus:ring-2 focus:ring-[#00a775]/10" />
+            <button type="button" (click)="showPassword = !showPassword"
+              class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer">
+              <i class="pi text-xs" [ngClass]="showPassword ? 'pi-eye-slash' : 'pi-eye'"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Role Selector (Register Mode Only) -->
+        <div *ngIf="!isLogin" class="flex flex-col gap-1 pt-1">
+          <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Tipo de Usuario</label>
+          <div class="flex gap-4 mt-1">
+            <label class="flex items-center gap-2 text-xs text-slate-600 cursor-pointer">
+              <input type="radio" name="role" value="client" [(ngModel)]="role" class="accent-[#00a775] w-3.5 h-3.5">
+              <span>Buscar y Reservar</span>
+            </label>
+            <label class="flex items-center gap-2 text-xs text-slate-600 cursor-pointer">
+              <input type="radio" name="role" value="owner" [(ngModel)]="role" class="accent-[#00a775] w-3.5 h-3.5">
+              <span>Dueño (Gestión)</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Complex Details for Owner (Register Mode Only) -->
+        <div *ngIf="!isLogin && role === 'owner'" class="space-y-3 pt-3 border-t border-slate-200/60 animate-slide-down">
+          <h3 class="text-xs font-bold text-[#00a775]">Datos de tu Complejo Deportivo</h3>
+
+          <div class="flex flex-col gap-1">
+            <label class="text-[9px] font-bold uppercase tracking-wider text-slate-500">Nombre del Complejo</label>
+            <input type="text" name="complexName" [(ngModel)]="complexName" placeholder="Ej. Club Deportivo San Isidro"
+              class="w-full bg-white border border-slate-200/80 focus:border-[#00a775] text-slate-800 placeholder-slate-400/80 rounded-xl py-2 px-3 text-xs transition-all outline-none focus:ring-2 focus:ring-[#00a775]/10" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="flex flex-col gap-1">
+              <label class="text-[9px] font-bold uppercase tracking-wider text-slate-500">Distrito</label>
+              <select name="complexDistrict" [(ngModel)]="complexDistrict"
+                class="w-full bg-white border border-slate-200/80 focus:border-[#00a775] text-slate-800 rounded-xl py-2 px-2 text-xs transition-all outline-none focus:ring-2 focus:ring-[#00a775]/10">
+                <option value="" disabled selected>Selecciona...</option>
+                <option *ngFor="let dist of districts" [value]="dist">{{ dist }}</option>
+              </select>
+            </div>
+
+            <div class="flex flex-col gap-1">
+              <label class="text-[9px] font-bold uppercase tracking-wider text-slate-500">Teléfono</label>
+              <input type="text" name="complexPhone" [(ngModel)]="complexPhone" placeholder="Ej. 987654321"
+                class="w-full bg-white border border-slate-200/80 focus:border-[#00a775] text-slate-800 placeholder-slate-400/80 rounded-xl py-2 px-3 text-xs transition-all outline-none focus:ring-2 focus:ring-[#00a775]/10" />
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1">
+            <label class="text-[9px] font-bold uppercase tracking-wider text-slate-500">Dirección</label>
+            <input type="text" name="complexAddress" [(ngModel)]="complexAddress" placeholder="Av. Principal 123"
+              class="w-full bg-white border border-slate-200/80 focus:border-[#00a775] text-slate-800 placeholder-slate-400/80 rounded-xl py-2 px-3 text-xs transition-all outline-none focus:ring-2 focus:ring-[#00a775]/10" />
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit"
+          class="w-full bg-[#00a775] hover:bg-[#009468] active:bg-[#007f59] text-white font-bold py-2.5 rounded-xl shadow-lg shadow-emerald-600/15 transition-all duration-200 cursor-pointer text-xs mt-3">
+          {{ isLogin ? 'Ingresar' : 'Registrar' }}
+        </button>
+      </form>
+
+      <!-- Toggle Mode Link -->
+      <div class="text-center mt-4">
+        <button type="button" (click)="toggleTab()"
+          class="text-xs font-semibold text-slate-500 hover:text-[#00a775] transition-colors focus:outline-none cursor-pointer">
+          {{ isLogin ? '¿No tienes una cuenta? Regístrate' : '¿Ya tienes una cuenta? Inicia sesión' }}
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Floating Help Button -->
+    <button type="button"
+      class="absolute bottom-4 right-4 w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-900 text-white flex items-center justify-center text-xs font-bold shadow-md transition-all duration-200 focus:outline-none cursor-pointer">
+      ?
+    </button>
+  </div>
+
+</div>

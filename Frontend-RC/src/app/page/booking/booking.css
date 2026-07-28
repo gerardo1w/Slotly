@@ -1,0 +1,8 @@
+/* Styles specific to the Booking Component calendar grid */
+table th {
+  letter-spacing: 0.05em;
+}
+
+table td button {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}

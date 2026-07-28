@@ -1,0 +1,27 @@
+/* App Component styles */
+::ng-deep .custom-profile-menu {
+  background-color: #151c2c !important;
+  border: 1px solid #1f2937 !important;
+  color: #f3f4f6 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4) !important;
+}
+
+::ng-deep .custom-profile-menu .p-menuitem-link {
+  color: #d1d5db !important;
+}
+
+::ng-deep .custom-profile-menu .p-menuitem-link:hover {
+  background-color: #1f2937 !important;
+  color: #f9fafb !important;
+}
+
+::ng-deep .custom-profile-menu .p-submenu-header {
+  background-color: #0b111e !important;
+  color: #10b981 !important;
+  font-weight: bold !important;
+  font-size: 10px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  border-bottom: 1px solid #1f2937 !important;
+}
