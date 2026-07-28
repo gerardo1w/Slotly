@@ -1,6 +1,6 @@
 export const environment = {
   production: false,
-  urlBase: 'http://localhost:8080/api',
+  urlBase: 'https://slotly-production-9162.up.railway.app',
   useMockBackend: false,
   keycloak: {
     url: 'http://localhost:8081',
