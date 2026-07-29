@@ -35,7 +35,6 @@ com\epiis\reservacanchas\dto\request\RequestUserSubscribe.class
 com\epiis\reservacanchas\dto\request\RequestPitchUpdate.class
 com\epiis\reservacanchas\entity\EntityPitch.class
 com\epiis\reservacanchas\dto\request\RequestUserRegister.class
-com\epiis\reservacanchas\config\FirebaseConfig.class
 com\epiis\reservacanchas\business\BusinessTransaction.class
 com\epiis\reservacanchas\dto\request\RequestComplexUpdate.class
 com\epiis\reservacanchas\entity\EntityBooking.class
