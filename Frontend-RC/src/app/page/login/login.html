@@ -102,10 +102,14 @@
             <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
               <i class="pi pi-user text-xs"></i>
             </span>
-            <input type="text" name="name" [(ngModel)]="name" placeholder="Ej. Juan Pérez"
+            <input type="text" name="name" [(ngModel)]="name" #nameCtrl="ngModel" placeholder="Ej. Juan Pérez"
               required minlength="3" maxlength="50" pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$"
-              title="El nombre debe tener entre 3 y 50 caracteres y solo contener letras"
-              class="w-full bg-white border border-slate-200/80 focus:border-[#00a775] text-slate-800 placeholder-slate-400/80 rounded-xl py-2.5 pl-9 pr-4 text-xs transition-all outline-none focus:ring-2 focus:ring-[#00a775]/10" />
+              class="w-full bg-white border border-slate-200/80 focus:border-[#00a775] text-slate-800 placeholder-slate-400/80 rounded-xl py-2.5 pl-9 pr-4 text-xs transition-all outline-none focus:ring-2 focus:ring-[#00a775]/10"
+              [ngClass]="{'!border-rose-500 focus:!border-rose-500 focus:!ring-rose-500/20': nameCtrl.invalid && (nameCtrl.dirty || nameCtrl.touched)}" />
+          </div>
+          <div *ngIf="nameCtrl.invalid && (nameCtrl.dirty || nameCtrl.touched)" class="text-rose-500 text-[10px] animate-fade-in pl-1">
+            <span *ngIf="nameCtrl.errors?.['required']">El nombre es requerido.</span>
+            <span *ngIf="nameCtrl.errors?.['minlength'] || nameCtrl.errors?.['pattern']">El nombre debe tener entre 3 y 50 caracteres y solo contener letras.</span>
           </div>
         </div>
 
@@ -116,10 +120,14 @@
             <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
               <i class="pi pi-envelope text-xs"></i>
             </span>
-            <input type="email" name="email" [(ngModel)]="email" placeholder="tu@correo.com"
+            <input type="email" name="email" [(ngModel)]="email" #emailCtrl="ngModel" placeholder="tu@correo.com"
               required pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
-              title="Ingrese un correo electrónico válido"
-              class="w-full bg-white border border-slate-200/80 focus:border-[#00a775] text-slate-800 placeholder-slate-400/80 rounded-xl py-2.5 pl-9 pr-4 text-xs transition-all outline-none focus:ring-2 focus:ring-[#00a775]/10" />
+              class="w-full bg-white border border-slate-200/80 focus:border-[#00a775] text-slate-800 placeholder-slate-400/80 rounded-xl py-2.5 pl-9 pr-4 text-xs transition-all outline-none focus:ring-2 focus:ring-[#00a775]/10"
+              [ngClass]="{'!border-rose-500 focus:!border-rose-500 focus:!ring-rose-500/20': emailCtrl.invalid && (emailCtrl.dirty || emailCtrl.touched)}" />
+          </div>
+          <div *ngIf="emailCtrl.invalid && (emailCtrl.dirty || emailCtrl.touched)" class="text-rose-500 text-[10px] animate-fade-in pl-1">
+            <span *ngIf="emailCtrl.errors?.['required']">El correo es requerido.</span>
+            <span *ngIf="emailCtrl.errors?.['pattern']">Ingrese un correo electrónico válido.</span>
           </div>
         </div>
 
@@ -130,14 +138,21 @@
             <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
               <i class="pi pi-lock text-xs"></i>
             </span>
-            <input [type]="showPassword ? 'text' : 'password'" name="password" [(ngModel)]="password" placeholder="••••••••"
+            <input [type]="showPassword ? 'text' : 'password'" name="password" [(ngModel)]="password" #passCtrl="ngModel" placeholder="••••••••"
               required minlength="8" pattern="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$"
-              title="Debe contener al menos 8 caracteres, una mayúscula, una minúscula y un número"
-              class="w-full bg-white border border-slate-200/80 focus:border-[#00a775] text-slate-800 placeholder-slate-400/80 rounded-xl py-2.5 pl-9 pr-9 text-xs transition-all outline-none focus:ring-2 focus:ring-[#00a775]/10" />
+              class="w-full bg-white border border-slate-200/80 focus:border-[#00a775] text-slate-800 placeholder-slate-400/80 rounded-xl py-2.5 pl-9 pr-9 text-xs transition-all outline-none focus:ring-2 focus:ring-[#00a775]/10"
+              [ngClass]="{'!border-rose-500 focus:!border-rose-500 focus:!ring-rose-500/20': passCtrl.invalid && (passCtrl.dirty || passCtrl.touched)}" />
             <button type="button" (click)="showPassword = !showPassword"
               class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer">
               <i class="pi text-xs" [ngClass]="showPassword ? 'pi-eye-slash' : 'pi-eye'"></i>
             </button>
+          </div>
+          <div *ngIf="passCtrl.invalid && (passCtrl.dirty || passCtrl.touched) && !isLogin" class="text-rose-500 text-[10px] animate-fade-in pl-1">
+            <span *ngIf="passCtrl.errors?.['required']">La contraseña es requerida.</span>
+            <span *ngIf="passCtrl.errors?.['minlength'] || passCtrl.errors?.['pattern']">Debe contener al menos 8 caracteres, una mayúscula, minúscula y un número.</span>
+          </div>
+          <div *ngIf="passCtrl.invalid && (passCtrl.dirty || passCtrl.touched) && isLogin" class="text-rose-500 text-[10px] animate-fade-in pl-1">
+            <span *ngIf="passCtrl.errors?.['required']">La contraseña es requerida.</span>
           </div>
         </div>
 
@@ -162,36 +177,52 @@
 
           <div class="flex flex-col gap-1">
             <label class="text-[9px] font-bold uppercase tracking-wider text-slate-500">Nombre del Complejo</label>
-            <input type="text" name="complexName" [(ngModel)]="complexName" placeholder="Ej. Club Deportivo San Isidro"
+            <input type="text" name="complexName" [(ngModel)]="complexName" #compNameCtrl="ngModel" placeholder="Ej. Club Deportivo San Isidro"
               required minlength="3" maxlength="100"
-              title="El nombre del complejo debe tener entre 3 y 100 caracteres"
-              class="w-full bg-white border border-slate-200/80 focus:border-[#00a775] text-slate-800 placeholder-slate-400/80 rounded-xl py-2 px-3 text-xs transition-all outline-none focus:ring-2 focus:ring-[#00a775]/10" />
+              class="w-full bg-white border border-slate-200/80 focus:border-[#00a775] text-slate-800 placeholder-slate-400/80 rounded-xl py-2 px-3 text-xs transition-all outline-none focus:ring-2 focus:ring-[#00a775]/10"
+              [ngClass]="{'!border-rose-500 focus:!border-rose-500 focus:!ring-rose-500/20': compNameCtrl.invalid && (compNameCtrl.dirty || compNameCtrl.touched)}" />
+            <div *ngIf="compNameCtrl.invalid && (compNameCtrl.dirty || compNameCtrl.touched)" class="text-rose-500 text-[10px] animate-fade-in pl-1">
+              <span *ngIf="compNameCtrl.errors?.['required']">El nombre es requerido.</span>
+              <span *ngIf="compNameCtrl.errors?.['minlength']">Debe tener al menos 3 caracteres.</span>
+            </div>
           </div>
 
           <div class="grid grid-cols-2 gap-3">
             <div class="flex flex-col gap-1">
               <label class="text-[9px] font-bold uppercase tracking-wider text-slate-500">Distrito</label>
-              <select name="complexDistrict" [(ngModel)]="complexDistrict"
-                class="w-full bg-white border border-slate-200/80 focus:border-[#00a775] text-slate-800 rounded-xl py-2 px-2 text-xs transition-all outline-none focus:ring-2 focus:ring-[#00a775]/10">
+              <select name="complexDistrict" [(ngModel)]="complexDistrict" #distCtrl="ngModel" required
+                class="w-full bg-white border border-slate-200/80 focus:border-[#00a775] text-slate-800 rounded-xl py-2 px-2 text-xs transition-all outline-none focus:ring-2 focus:ring-[#00a775]/10"
+                [ngClass]="{'!border-rose-500 focus:!border-rose-500 focus:!ring-rose-500/20': distCtrl.invalid && (distCtrl.dirty || distCtrl.touched)}">
                 <option value="" disabled selected>Selecciona...</option>
                 <option *ngFor="let dist of districts" [value]="dist">{{ dist }}</option>
               </select>
+              <div *ngIf="distCtrl.invalid && (distCtrl.dirty || distCtrl.touched)" class="text-rose-500 text-[10px] animate-fade-in pl-1">
+                <span *ngIf="distCtrl.errors?.['required']">Seleccione un distrito.</span>
+              </div>
             </div>
 
             <div class="flex flex-col gap-1">
               <label class="text-[9px] font-bold uppercase tracking-wider text-slate-500">Teléfono</label>
-              <input type="text" name="complexPhone" [(ngModel)]="complexPhone" placeholder="Ej. 987654321"
+              <input type="text" name="complexPhone" [(ngModel)]="complexPhone" #phoneCtrl="ngModel" placeholder="Ej. 987654321"
                 required pattern="^[0-9]{9}$" maxlength="9"
-                title="Debe contener exactamente 9 dígitos numéricos"
-                class="w-full bg-white border border-slate-200/80 focus:border-[#00a775] text-slate-800 placeholder-slate-400/80 rounded-xl py-2 px-3 text-xs transition-all outline-none focus:ring-2 focus:ring-[#00a775]/10" />
+                class="w-full bg-white border border-slate-200/80 focus:border-[#00a775] text-slate-800 placeholder-slate-400/80 rounded-xl py-2 px-3 text-xs transition-all outline-none focus:ring-2 focus:ring-[#00a775]/10"
+                [ngClass]="{'!border-rose-500 focus:!border-rose-500 focus:!ring-rose-500/20': phoneCtrl.invalid && (phoneCtrl.dirty || phoneCtrl.touched)}" />
+              <div *ngIf="phoneCtrl.invalid && (phoneCtrl.dirty || phoneCtrl.touched)" class="text-rose-500 text-[10px] animate-fade-in pl-1">
+                <span *ngIf="phoneCtrl.errors?.['required']">El teléfono es requerido.</span>
+                <span *ngIf="phoneCtrl.errors?.['pattern']">Debe ser exactamente 9 dígitos.</span>
+              </div>
             </div>
           </div>
 
           <div class="flex flex-col gap-1">
             <label class="text-[9px] font-bold uppercase tracking-wider text-slate-500">Dirección</label>
-            <input type="text" name="complexAddress" [(ngModel)]="complexAddress" placeholder="Av. Principal 123"
+            <input type="text" name="complexAddress" [(ngModel)]="complexAddress" #addrCtrl="ngModel" placeholder="Av. Principal 123"
               required
-              class="w-full bg-white border border-slate-200/80 focus:border-[#00a775] text-slate-800 placeholder-slate-400/80 rounded-xl py-2 px-3 text-xs transition-all outline-none focus:ring-2 focus:ring-[#00a775]/10" />
+              class="w-full bg-white border border-slate-200/80 focus:border-[#00a775] text-slate-800 placeholder-slate-400/80 rounded-xl py-2 px-3 text-xs transition-all outline-none focus:ring-2 focus:ring-[#00a775]/10"
+              [ngClass]="{'!border-rose-500 focus:!border-rose-500 focus:!ring-rose-500/20': addrCtrl.invalid && (addrCtrl.dirty || addrCtrl.touched)}" />
+            <div *ngIf="addrCtrl.invalid && (addrCtrl.dirty || addrCtrl.touched)" class="text-rose-500 text-[10px] animate-fade-in pl-1">
+              <span *ngIf="addrCtrl.errors?.['required']">La dirección es requerida.</span>
+            </div>
           </div>
         </div>
 
