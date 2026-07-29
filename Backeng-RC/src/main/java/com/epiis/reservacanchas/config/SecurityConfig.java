@@ -4,19 +4,18 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
@@ -33,6 +32,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
+            // *** NO http.cors() aquí — el CorsFilter servlet-level lo maneja ANTES ***
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
@@ -50,16 +50,13 @@ public class SecurityConfig {
                     "/api/usuarios/login",
                     "/error"
                 ).permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/usuarios/login").permitAll()
+                .requestMatchers(HttpMethod.POST,    "/api/usuarios").permitAll()
+                .requestMatchers(HttpMethod.POST,    "/api/usuarios/login").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .anyRequest().authenticated()
             );
 
         http.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(jwtDecoder())));
-
-        // Configure CORS globally for the API
-        http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 
         // Allow H2 console frames
         http.headers(headers -> headers.frameOptions(frame -> frame.disable()));
@@ -79,9 +76,9 @@ public class SecurityConfig {
         return token -> {
             Map<String, Object> headers = Map.of("alg", "none");
             Map<String, Object> claims = Map.of(
-                "sub", "mock-user-id",
+                "sub",   "mock-user-id",
                 "email", "mock@example.com",
-                "name", "Mock User",
+                "name",  "Mock User",
                 "roles", Collections.singletonList("client")
             );
             return new Jwt(
@@ -94,34 +91,31 @@ public class SecurityConfig {
         };
     }
 
+    /**
+     * CorsFilter registrado a nivel de Servlet con MAXIMA prioridad.
+     * Al estar ANTES de Spring Security, las cabeceras CORS se inyectan
+     * en TODAS las respuestas (incluyendo 401/403), evitando el bloqueo
+     * del navegador en peticiones preflight OPTIONS.
+     */
     @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        // Orígenes permitidos: local + ambos servicios en Railway
-        configuration.setAllowedOriginPatterns(List.of(
+    public FilterRegistrationBean<CorsFilter> corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+
+        CorsConfiguration config = new CorsConfiguration();
+        // Acepta cualquier origen de Railway y localhost (puerto libre)
+        config.setAllowedOriginPatterns(List.of(
             "http://localhost:*",
             "https://*.up.railway.app"
         ));
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowCredentials(true);
-        configuration.setMaxAge(3600L);
-        configuration.addExposedHeader("Authorization");
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
+        config.setMaxAge(3600L);
+        config.addExposedHeader("Authorization");
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-        return source;
-    }
+        source.registerCorsConfiguration("/**", config);
 
-    /**
-     * Registra el CorsFilter con la máxima prioridad (antes de Spring Security).
-     * Esto garantiza que las cabeceras CORS se agregan incluso cuando
-     * el filtro de seguridad rechazaría la petición.
-     */
-    @Bean
-    public FilterRegistrationBean<CorsFilter> corsFilterRegistration() {
-        FilterRegistrationBean<CorsFilter> bean =
-            new FilterRegistrationBean<>(new CorsFilter(corsConfigurationSource()));
+        FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
         bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
         return bean;
     }
