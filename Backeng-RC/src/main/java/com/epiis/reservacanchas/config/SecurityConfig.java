@@ -3,7 +3,6 @@ package com.epiis.reservacanchas.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -12,11 +11,9 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
@@ -33,7 +30,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
-            // Spring Security también aplica CORS internamente para respetar nuestro corsConfigurationSource
+            // Unica fuente de CORS: gestionada directamente por Spring Security.
+            // (Se eliminó el CorsFilter manual duplicado que causaba conflicto de headers)
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
@@ -92,7 +90,7 @@ public class SecurityConfig {
     }
 
     /**
-     * Fuente de configuración CORS compartida entre Spring Security y el filtro servlet.
+     * Fuente de configuración CORS usada por Spring Security.
      */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -110,18 +108,5 @@ public class SecurityConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
         return source;
-    }
-
-    /**
-     * CorsFilter a nivel servlet con MAXIMA prioridad.
-     * IMPORTANTE: el nombre del bean NO es "corsFilter" para evitar el conflicto
-     * con el CorsFilter interno de Spring Security que busca ese nombre.
-     */
-    @Bean(name = "appCorsFilter")
-    public FilterRegistrationBean<CorsFilter> appCorsFilter(CorsConfigurationSource corsConfigurationSource) {
-        FilterRegistrationBean<CorsFilter> bean =
-            new FilterRegistrationBean<>(new CorsFilter(corsConfigurationSource));
-        bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
-        return bean;
     }
 }
