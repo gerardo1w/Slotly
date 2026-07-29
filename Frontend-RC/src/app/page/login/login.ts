@@ -39,7 +39,7 @@ export class LoginComponent implements OnInit {
   errorMessage = '';
   successMessage = '';
 
-  districts = ['Miraflores', 'San Isidro', 'Santiago de Surco', 'San Borja', 'La Molina'];
+  districts = ['Abancay', 'Tamburco'];
 
   constructor(
     private authService: AuthService,
@@ -110,9 +110,9 @@ export class LoginComponent implements OnInit {
           this.errorMessage = 'El nombre del complejo debe tener entre 3 y 100 caracteres.';
           return;
         }
-        const phoneRegex = /^[0-9]{9}$/;
+        const phoneRegex = /^9[0-9]{8}$/;
         if (!phoneRegex.test(this.complexPhone)) {
-          this.errorMessage = 'El teléfono debe contener exactamente 9 dígitos numéricos.';
+          this.errorMessage = 'El teléfono debe empezar con 9 y contener exactamente 9 dígitos.';
           return;
         }
       }

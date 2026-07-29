@@ -43,7 +43,7 @@ public class RequestUserRegister {
         private String district;
 
         @NotBlank(message = "El campo \"phone\" del complejo es requerido.")
-        @Pattern(regexp = "^[0-9]{9}$", message = "El teléfono debe tener exactamente 9 dígitos numéricos.")
+        @Pattern(regexp = "^9[0-9]{8}$", message = "El teléfono debe empezar con 9 y tener exactamente 9 dígitos.")
         private String phone;
     }
 }
