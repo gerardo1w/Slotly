@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/cierres")
+@RequestMapping("/api/cierres")
 public class ClosureController {
 
     private final BusinessClosure businessClosure;

@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/complejos")
+@RequestMapping("/api/complejos")
 public class ComplexController {
 
     private final BusinessComplex businessComplex;

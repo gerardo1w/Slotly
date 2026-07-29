@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/canchas")
+@RequestMapping("/api/canchas")
 public class PitchController {
 
     private final BusinessPitch businessPitch;

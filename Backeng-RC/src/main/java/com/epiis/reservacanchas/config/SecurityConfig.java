@@ -33,6 +33,7 @@ public class SecurityConfig {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
+                    "/",
                     "/docs",
                     "/docs/**",
                     "/swagger-ui/**",
@@ -42,14 +43,12 @@ public class SecurityConfig {
                     "/h2-console/**",
                     "/actuator",
                     "/actuator/**",
-                    "/usuarios",
                     "/api/usuarios",
-                    "/usuarios/login",
                     "/api/usuarios/login",
                     "/error"
                 ).permitAll()
-                .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
-                .requestMatchers(HttpMethod.POST, "/usuarios/login").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/usuarios/login").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .anyRequest().authenticated()
             );
