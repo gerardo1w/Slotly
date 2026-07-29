@@ -14,6 +14,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import java.time.Instant;
@@ -32,7 +33,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
-            // *** NO http.cors() aquí — el CorsFilter servlet-level lo maneja ANTES ***
+            // Spring Security también aplica CORS internamente para respetar nuestro corsConfigurationSource
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(
@@ -57,8 +59,6 @@ public class SecurityConfig {
             );
 
         http.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwt -> jwt.decoder(jwtDecoder())));
-
-        // Allow H2 console frames
         http.headers(headers -> headers.frameOptions(frame -> frame.disable()));
 
         return http.build();
@@ -92,17 +92,11 @@ public class SecurityConfig {
     }
 
     /**
-     * CorsFilter registrado a nivel de Servlet con MAXIMA prioridad.
-     * Al estar ANTES de Spring Security, las cabeceras CORS se inyectan
-     * en TODAS las respuestas (incluyendo 401/403), evitando el bloqueo
-     * del navegador en peticiones preflight OPTIONS.
+     * Fuente de configuración CORS compartida entre Spring Security y el filtro servlet.
      */
     @Bean
-    public FilterRegistrationBean<CorsFilter> corsFilter() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        // Acepta cualquier origen de Railway y localhost (puerto libre)
         config.setAllowedOriginPatterns(List.of(
             "http://localhost:*",
             "https://*.up.railway.app"
@@ -113,9 +107,20 @@ public class SecurityConfig {
         config.setMaxAge(3600L);
         config.addExposedHeader("Authorization");
 
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
+        return source;
+    }
 
-        FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(new CorsFilter(source));
+    /**
+     * CorsFilter a nivel servlet con MAXIMA prioridad.
+     * IMPORTANTE: el nombre del bean NO es "corsFilter" para evitar el conflicto
+     * con el CorsFilter interno de Spring Security que busca ese nombre.
+     */
+    @Bean(name = "appCorsFilter")
+    public FilterRegistrationBean<CorsFilter> appCorsFilter(CorsConfigurationSource corsConfigurationSource) {
+        FilterRegistrationBean<CorsFilter> bean =
+            new FilterRegistrationBean<>(new CorsFilter(corsConfigurationSource));
         bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
         return bean;
     }
