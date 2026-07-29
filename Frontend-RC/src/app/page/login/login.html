@@ -103,6 +103,8 @@
               <i class="pi pi-user text-xs"></i>
             </span>
             <input type="text" name="name" [(ngModel)]="name" placeholder="Ej. Juan Pérez"
+              required minlength="3" maxlength="50" pattern="^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$"
+              title="El nombre debe tener entre 3 y 50 caracteres y solo contener letras"
               class="w-full bg-white border border-slate-200/80 focus:border-[#00a775] text-slate-800 placeholder-slate-400/80 rounded-xl py-2.5 pl-9 pr-4 text-xs transition-all outline-none focus:ring-2 focus:ring-[#00a775]/10" />
           </div>
         </div>
@@ -115,6 +117,8 @@
               <i class="pi pi-envelope text-xs"></i>
             </span>
             <input type="email" name="email" [(ngModel)]="email" placeholder="tu@correo.com"
+              required pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$"
+              title="Ingrese un correo electrónico válido"
               class="w-full bg-white border border-slate-200/80 focus:border-[#00a775] text-slate-800 placeholder-slate-400/80 rounded-xl py-2.5 pl-9 pr-4 text-xs transition-all outline-none focus:ring-2 focus:ring-[#00a775]/10" />
           </div>
         </div>
@@ -127,6 +131,8 @@
               <i class="pi pi-lock text-xs"></i>
             </span>
             <input [type]="showPassword ? 'text' : 'password'" name="password" [(ngModel)]="password" placeholder="••••••••"
+              required minlength="8" pattern="^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$"
+              title="Debe contener al menos 8 caracteres, una mayúscula, una minúscula y un número"
               class="w-full bg-white border border-slate-200/80 focus:border-[#00a775] text-slate-800 placeholder-slate-400/80 rounded-xl py-2.5 pl-9 pr-9 text-xs transition-all outline-none focus:ring-2 focus:ring-[#00a775]/10" />
             <button type="button" (click)="showPassword = !showPassword"
               class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer">
@@ -157,6 +163,8 @@
           <div class="flex flex-col gap-1">
             <label class="text-[9px] font-bold uppercase tracking-wider text-slate-500">Nombre del Complejo</label>
             <input type="text" name="complexName" [(ngModel)]="complexName" placeholder="Ej. Club Deportivo San Isidro"
+              required minlength="3" maxlength="100"
+              title="El nombre del complejo debe tener entre 3 y 100 caracteres"
               class="w-full bg-white border border-slate-200/80 focus:border-[#00a775] text-slate-800 placeholder-slate-400/80 rounded-xl py-2 px-3 text-xs transition-all outline-none focus:ring-2 focus:ring-[#00a775]/10" />
           </div>
 
@@ -173,6 +181,8 @@
             <div class="flex flex-col gap-1">
               <label class="text-[9px] font-bold uppercase tracking-wider text-slate-500">Teléfono</label>
               <input type="text" name="complexPhone" [(ngModel)]="complexPhone" placeholder="Ej. 987654321"
+                required pattern="^[0-9]{9}$" maxlength="9"
+                title="Debe contener exactamente 9 dígitos numéricos"
                 class="w-full bg-white border border-slate-200/80 focus:border-[#00a775] text-slate-800 placeholder-slate-400/80 rounded-xl py-2 px-3 text-xs transition-all outline-none focus:ring-2 focus:ring-[#00a775]/10" />
             </div>
           </div>
@@ -180,6 +190,7 @@
           <div class="flex flex-col gap-1">
             <label class="text-[9px] font-bold uppercase tracking-wider text-slate-500">Dirección</label>
             <input type="text" name="complexAddress" [(ngModel)]="complexAddress" placeholder="Av. Principal 123"
+              required
               class="w-full bg-white border border-slate-200/80 focus:border-[#00a775] text-slate-800 placeholder-slate-400/80 rounded-xl py-2 px-3 text-xs transition-all outline-none focus:ring-2 focus:ring-[#00a775]/10" />
           </div>
         </div>

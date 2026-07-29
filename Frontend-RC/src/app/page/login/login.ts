@@ -82,10 +82,39 @@ export class LoginComponent implements OnInit {
         this.errorMessage = 'Por favor complete los campos obligatorios.';
         return;
       }
-
-      if (this.role === 'owner' && (!this.complexName || !this.complexAddress || !this.complexDistrict || !this.complexPhone)) {
-        this.errorMessage = 'Por favor complete los datos de su complejo deportivo.';
+      
+      const nameRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+      if (this.name.length < 3 || this.name.length > 50 || !nameRegex.test(this.name)) {
+        this.errorMessage = 'El nombre debe tener entre 3 y 50 caracteres y solo contener letras.';
         return;
+      }
+      
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(this.email)) {
+        this.errorMessage = 'Por favor ingrese un correo electrónico válido.';
+        return;
+      }
+      
+      const passwordRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+      if (!passwordRegex.test(this.password)) {
+        this.errorMessage = 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número.';
+        return;
+      }
+
+      if (this.role === 'owner') {
+        if (!this.complexName || !this.complexAddress || !this.complexDistrict || !this.complexPhone) {
+          this.errorMessage = 'Por favor complete los datos de su complejo deportivo.';
+          return;
+        }
+        if (this.complexName.length < 3 || this.complexName.length > 100) {
+          this.errorMessage = 'El nombre del complejo debe tener entre 3 y 100 caracteres.';
+          return;
+        }
+        const phoneRegex = /^[0-9]{9}$/;
+        if (!phoneRegex.test(this.complexPhone)) {
+          this.errorMessage = 'El teléfono debe contener exactamente 9 dígitos numéricos.';
+          return;
+        }
       }
 
       const body = {
