@@ -27,6 +27,8 @@ export class LoginComponent implements OnInit {
   showPassword = false;
   email = '';
   password = '';
+  confirmPassword = '';
+  showConfirmPassword = false;
   name = '';
   role: 'client' | 'owner' = 'client';
 
@@ -57,6 +59,7 @@ export class LoginComponent implements OnInit {
     this.isLogin = !this.isLogin;
     this.errorMessage = '';
     this.successMessage = '';
+    this.confirmPassword = '';
   }
 
   onSubmit() {
@@ -78,8 +81,13 @@ export class LoginComponent implements OnInit {
         }
       });
     } else {
-      if (!this.email || !this.password || !this.name) {
+      if (!this.email || !this.password || !this.name || !this.confirmPassword) {
         this.errorMessage = 'Por favor complete los campos obligatorios.';
+        return;
+      }
+      
+      if (this.password !== this.confirmPassword) {
+        this.errorMessage = 'Las contraseñas no coinciden.';
         return;
       }
       
@@ -141,6 +149,7 @@ export class LoginComponent implements OnInit {
             this.isLogin = true;
             this.email = user.email;
             this.password = '';
+            this.confirmPassword = '';
             this.errorMessage = '';
             this.successMessage = '';
           }, 2000);

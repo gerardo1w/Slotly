@@ -156,6 +156,28 @@
           </div>
         </div>
 
+        <!-- Confirm Password Field (Register Mode Only) -->
+        <div *ngIf="!isLogin" class="flex flex-col gap-1">
+          <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Confirmar Contraseña</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+              <i class="pi pi-lock text-xs"></i>
+            </span>
+            <input [type]="showConfirmPassword ? 'text' : 'password'" name="confirmPassword" [(ngModel)]="confirmPassword" #confirmPassCtrl="ngModel" placeholder="••••••••"
+              required minlength="8"
+              class="w-full bg-white border border-slate-200/80 focus:border-[#00a775] text-slate-800 placeholder-slate-400/80 rounded-xl py-2.5 pl-9 pr-9 text-xs transition-all outline-none focus:ring-2 focus:ring-[#00a775]/10"
+              [ngClass]="{'!border-rose-500 focus:!border-rose-500 focus:!ring-rose-500/20': (confirmPassCtrl.invalid || (confirmPassword && confirmPassword !== password)) && (confirmPassCtrl.dirty || confirmPassCtrl.touched)}" />
+            <button type="button" (click)="showConfirmPassword = !showConfirmPassword"
+              class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 focus:outline-none cursor-pointer">
+              <i class="pi text-xs" [ngClass]="showConfirmPassword ? 'pi-eye-slash' : 'pi-eye'"></i>
+            </button>
+          </div>
+          <div *ngIf="(confirmPassCtrl.invalid || (confirmPassword && confirmPassword !== password)) && (confirmPassCtrl.dirty || confirmPassCtrl.touched)" class="text-rose-500 text-[10px] animate-fade-in pl-1">
+            <span *ngIf="confirmPassCtrl.errors?.['required']">Debe confirmar su contraseña.</span>
+            <span *ngIf="confirmPassword && confirmPassword !== password">Las contraseñas no coinciden.</span>
+          </div>
+        </div>
+
         <!-- Role Selector (Register Mode Only) -->
         <div *ngIf="!isLogin" class="flex flex-col gap-1 pt-1">
           <label class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Tipo de Usuario</label>
