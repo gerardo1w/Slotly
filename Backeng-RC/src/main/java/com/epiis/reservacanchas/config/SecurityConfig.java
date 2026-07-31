@@ -50,6 +50,8 @@ public class SecurityConfig {
                     "/api/usuarios/login",
                     "/error"
                 ).permitAll()
+                .requestMatchers(HttpMethod.GET,     "/api/canchas").permitAll()
+                .requestMatchers(HttpMethod.GET,     "/api/complejos").permitAll()
                 .requestMatchers(HttpMethod.POST,    "/api/usuarios").permitAll()
                 .requestMatchers(HttpMethod.POST,    "/api/usuarios/login").permitAll()
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()

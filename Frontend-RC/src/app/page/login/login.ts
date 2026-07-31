@@ -64,12 +64,17 @@ export class LoginComponent implements OnInit {
   loadSportStats() {
     apiPitchGetAll(this.http).subscribe({
       next: (pitches) => {
-        this.pitchCountFutbol  = pitches.filter(p => p.sport === 'Fútbol').length;
-        this.pitchCountVoley   = pitches.filter(p => p.sport === 'Vóley').length;
-        this.pitchCountBasquet = pitches.filter(p => p.sport === 'Básquet').length;
+        this.pitchCountFutbol  = pitches.filter(p => this.normalizeString(p.sport) === 'futbol').length;
+        this.pitchCountVoley   = pitches.filter(p => this.normalizeString(p.sport) === 'voley').length;
+        this.pitchCountBasquet = pitches.filter(p => this.normalizeString(p.sport) === 'basquet').length;
       },
       error: () => { /* silently ignore if API unreachable */ }
     });
+  }
+
+  private normalizeString(str: string | undefined): string {
+    if (!str) return '';
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
   }
 
   toggleTab() {
