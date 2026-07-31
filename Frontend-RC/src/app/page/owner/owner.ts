@@ -295,25 +295,19 @@ export class OwnerDashboardComponent implements OnInit {
       }
     });
 
-    // Load Bookings
-    const localBookings = localStorage.getItem('slotly_bookings');
-    if (localBookings) {
-      this.myBookings = JSON.parse(localBookings);
-      this.calculateMetrics();
-    } else {
-      apiBookingGetAll(this.http, { complexId }).subscribe({
-        next: (bookings) => {
-          this.myBookings = bookings;
-          localStorage.setItem('slotly_bookings', JSON.stringify(bookings));
-          this.calculateMetrics();
-        },
-        error: () => {
-          this.myBookings = this.getDefaultMockBookings(complexId);
-          localStorage.setItem('slotly_bookings', JSON.stringify(this.myBookings));
-          this.calculateMetrics();
-        }
-      });
-    }
+    // Load Bookings — always from API so owner changes are reflected for clients
+    apiBookingGetAll(this.http, { complexId }).subscribe({
+      next: (bookings) => {
+        this.myBookings = bookings;
+        this.calculateMetrics();
+        this.loadScheduleGrid();
+      },
+      error: () => {
+        this.myBookings = this.getDefaultMockBookings(complexId);
+        this.calculateMetrics();
+        this.loadScheduleGrid();
+      }
+    });
 
     // Load Transactions
     const localTxs = localStorage.getItem('slotly_transactions');
@@ -629,12 +623,15 @@ export class OwnerDashboardComponent implements OnInit {
       row.cells.forEach(cell => {
         if (cell.status !== cell.originalStatus) {
           if (cell.originalStatus === 'Libre') {
+            // Slot was free → now Ocupado or Reservado: insert new booking
             cellsToInsert.push(cell);
           } else if (cell.status === 'Libre') {
+            // Slot was occupied/reserved → now free: cancel existing booking
             if (cell.bookingId) {
               bookingsToCancel.push(cell.bookingId);
             }
           } else {
+            // Changed from one non-free state to another: cancel old, insert new
             if (cell.bookingId) {
               bookingsToCancel.push(cell.bookingId);
             }
@@ -650,53 +647,70 @@ export class OwnerDashboardComponent implements OnInit {
       return;
     }
 
-    // Process cancellations locally
-    bookingsToCancel.forEach(id => {
-      this.myBookings = this.myBookings.filter(b => b.id !== id);
-      // Remove corresponding booking income from transactions too
-      this.myTransactions = this.myTransactions.filter(t => !t.description.includes(`Reserva ${this.selectedPitchForSchedule!.name}`) || t.date !== this.weekDates[0].date);
+    // Track pending async operations
+    let pendingOps = bookingsToCancel.length + cellsToInsert.length;
+    let hasError = false;
+
+    const onOpComplete = () => {
+      pendingOps--;
+      if (pendingOps === 0) {
+        if (hasError) {
+          this.errorMessage = 'Algunos cambios no pudieron guardarse. Verifica tu conexión.';
+          setTimeout(() => { this.errorMessage = ''; }, 5000);
+        } else {
+          this.infoMessage = 'Cambios guardados con éxito en la base de datos.';
+          setTimeout(() => { this.infoMessage = ''; }, 4000);
+        }
+        // Reload grid from API so both owner and client see real state
+        this.reloadBookingsAndGrid();
+      }
+    };
+
+    // Process cancellations via API
+    bookingsToCancel.forEach(bookingId => {
+      apiBookingCancel(this.http, bookingId).subscribe({
+        next: () => onOpComplete(),
+        error: () => { hasError = true; onOpComplete(); }
+      });
     });
 
-    // Process insertions locally
+    // Process insertions via API
     cellsToInsert.forEach(cell => {
-      const bId = 'b-' + Date.now() + Math.floor(Math.random() * 1000);
-      const newBooking: ResponseBookingGetAll = {
-        id: bId,
+      const body = {
         pitchId: this.selectedPitchForSchedule!.id,
         complexId: this.myComplex!.id,
         complexName: this.myComplex!.name,
         pitchName: this.selectedPitchForSchedule!.name,
         sport: this.selectedPitchForSchedule!.sport,
         clientName: 'Reserva Presencial',
-        clientEmail: 'owner@control.com',
+        clientEmail: this.currentUser?.email || 'owner@slotly.com',
         date: cell.date,
         timeSlot: cell.timeSlot,
         price: this.selectedPitchForSchedule!.pricePerHour,
-        paymentMethod: 'Yape',
-        status: cell.status === 'Reservado' ? 'reserved' : 'active'
+        paymentMethod: 'Yape' as const,
+        status: (cell.status === 'Reservado' ? 'reserved' : 'active') as 'active' | 'reserved'
       };
-      this.myBookings.push(newBooking);
 
-      // Create transaction for this booking
-      const txId = 't-' + Date.now() + Math.floor(Math.random() * 1000);
-      const newTx: ResponseTransactionGet = {
-        id: txId,
-        complexId: this.myComplex!.id,
-        type: 'income',
-        description: `Cancha: ${this.selectedPitchForSchedule!.name} | Reserva ${this.selectedPitchForSchedule!.name} — ${cell.timeSlot}`,
-        amount: this.selectedPitchForSchedule!.pricePerHour,
-        date: cell.date
-      };
-      this.myTransactions.unshift(newTx);
+      apiBookingInsert(this.http, body).subscribe({
+        next: () => onOpComplete(),
+        error: () => { hasError = true; onOpComplete(); }
+      });
     });
+  }
 
-    // Save to localStorage
-    localStorage.setItem('slotly_bookings', JSON.stringify(this.myBookings));
-    localStorage.setItem('slotly_transactions', JSON.stringify(this.myTransactions));
-
-    this.infoMessage = 'Cambios guardados con éxito.';
-    this.loadScheduleGrid();
-    setTimeout(() => { this.infoMessage = ''; }, 4000);
+  /** Reloads bookings from the API and refreshes the schedule grid */
+  reloadBookingsAndGrid() {
+    if (!this.myComplex) return;
+    apiBookingGetAll(this.http, { complexId: this.myComplex.id }).subscribe({
+      next: (bookings) => {
+        this.myBookings = bookings;
+        this.loadScheduleGrid();
+        this.calculateMetrics();
+      },
+      error: () => {
+        this.loadScheduleGrid();
+      }
+    });
   }
 
   // --- Mis Canchas Methods ---

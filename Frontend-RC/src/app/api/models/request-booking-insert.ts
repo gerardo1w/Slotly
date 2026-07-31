@@ -10,4 +10,5 @@ export interface RequestBookingInsert {
   timeSlot: string;
   price: number;
   paymentMethod: 'Yape' | 'Plin' | 'Culqi';
+  status?: 'active' | 'reserved';
 }

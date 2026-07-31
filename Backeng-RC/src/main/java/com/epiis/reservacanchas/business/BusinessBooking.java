@@ -72,7 +72,12 @@ public class BusinessBooking {
         booking.setDate(request.getDate());
         booking.setTimeSlot(request.getTimeSlot());
         booking.setPrice(request.getPrice());
-        booking.setStatus(EnumBookingStatus.ACTIVE);
+        // Determine status from request: 'reserved' → RESERVED, otherwise → ACTIVE
+        EnumBookingStatus bookingStatus = EnumBookingStatus.ACTIVE;
+        if ("reserved".equalsIgnoreCase(request.getStatus())) {
+            bookingStatus = EnumBookingStatus.RESERVED;
+        }
+        booking.setStatus(bookingStatus);
         booking.setPaymentMethod(request.getPaymentMethod());
         booking.setCreatedAt(new Date());
         booking.setUpdatedAt(new Date());

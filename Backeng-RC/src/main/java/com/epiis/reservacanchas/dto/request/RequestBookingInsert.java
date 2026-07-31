@@ -44,5 +44,8 @@ public class RequestBookingInsert {
     private Double price;
 
     @NotBlank(message = "El campo \"paymentMethod\" es requerido.")
-    private String paymentMethod; // 'Yape' | 'Plin' | 'Culqi'
+    private String paymentMethod; // 'Yape', 'Plin', 'Culqi'
+
+    // Optional: 'active' (Ocupado) | 'reserved' (Reservado). Default = 'active'
+    private String status;
 }
