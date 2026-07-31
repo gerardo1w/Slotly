@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 import { HttpClient } from '@angular/common/http';
-import { apiUserRegister } from '../../api/api';
+import { apiUserRegister, apiPitchGetAll } from '../../api/api';
 import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
@@ -41,6 +41,11 @@ export class LoginComponent implements OnInit {
   errorMessage = '';
   successMessage = '';
 
+  // Sport pitch counts loaded from API
+  pitchCountFutbol = 0;
+  pitchCountVoley = 0;
+  pitchCountBasquet = 0;
+
   districts = ['Abancay', 'Tamburco'];
 
   constructor(
@@ -53,6 +58,18 @@ export class LoginComponent implements OnInit {
     if (this.authService.isLoggedIn()) {
       this.redirectUser();
     }
+    this.loadSportStats();
+  }
+
+  loadSportStats() {
+    apiPitchGetAll(this.http).subscribe({
+      next: (pitches) => {
+        this.pitchCountFutbol  = pitches.filter(p => p.sport === 'Fútbol').length;
+        this.pitchCountVoley   = pitches.filter(p => p.sport === 'Vóley').length;
+        this.pitchCountBasquet = pitches.filter(p => p.sport === 'Básquet').length;
+      },
+      error: () => { /* silently ignore if API unreachable */ }
+    });
   }
 
   toggleTab() {

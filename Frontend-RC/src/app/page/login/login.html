@@ -29,33 +29,76 @@
 
       <!-- Disciplines Grid -->
       <div class="mt-8 grid grid-cols-3 gap-3">
-        <!-- Football -->
-        <div class="bg-[#052b23]/40 border border-emerald-800/35 rounded-xl p-3 flex items-center gap-2.5 transition-all hover:bg-[#052b23]/60">
-          <span class="text-xl">⚽</span>
+
+        <!-- Fútbol -->
+        <div class="bg-[#052b23]/40 border border-emerald-800/35 rounded-xl p-3 flex items-center gap-2.5 transition-all hover:bg-[#052b23]/60 hover:border-emerald-700/50">
+          <!-- Soccer ball SVG: circle with pentagonal seam lines -->
+          <div class="flex-shrink-0 w-7 h-7 rounded-full bg-emerald-500/10 flex items-center justify-center">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="#00c58a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9"/>
+              <!-- central pentagon lines -->
+              <path d="M12 7 L9.5 9.5 L10.5 13 L13.5 13 L14.5 9.5 Z"/>
+              <path d="M12 7 L12 3.1"/>
+              <path d="M9.5 9.5 L6 8"/>
+              <path d="M10.5 13 L8 16"/>
+              <path d="M13.5 13 L16 16"/>
+              <path d="M14.5 9.5 L18 8"/>
+            </svg>
+          </div>
           <div>
             <div class="text-xs font-semibold text-white">Fútbol</div>
-            <div class="text-[9px] text-emerald-300/50">4 locales</div>
+            <div class="text-[9px] text-emerald-300/50">
+              {{ pitchCountFutbol }} {{ pitchCountFutbol === 1 ? 'cancha' : 'canchas' }}
+            </div>
           </div>
         </div>
 
-        <!-- Volleyball -->
-        <div class="bg-[#052b23]/40 border border-emerald-800/35 rounded-xl p-3 flex items-center gap-2.5 transition-all hover:bg-[#052b23]/60">
-          <span class="text-xl">🏐</span>
+        <!-- Vóley -->
+        <div class="bg-[#052b23]/40 border border-emerald-800/35 rounded-xl p-3 flex items-center gap-2.5 transition-all hover:bg-[#052b23]/60 hover:border-emerald-700/50">
+          <!-- Volleyball SVG: circle with 3 curved seam arcs -->
+          <div class="flex-shrink-0 w-7 h-7 rounded-full bg-emerald-500/10 flex items-center justify-center">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="#00c58a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9"/>
+              <!-- 3 curved seam lines -->
+              <path d="M12 3 Q7 7 7 12 Q7 17 12 21"/>
+              <path d="M3.5 8.5 Q8 10 11 14 Q14 18 20.5 18.5"/>
+              <path d="M3.5 15.5 Q8 14 11 10 Q14 6 20.5 5.5"/>
+            </svg>
+          </div>
           <div>
             <div class="text-xs font-semibold text-white">Vóley</div>
-            <div class="text-[9px] text-emerald-300/50">3 locales</div>
+            <div class="text-[9px] text-emerald-300/50">
+              {{ pitchCountVoley }} {{ pitchCountVoley === 1 ? 'cancha' : 'canchas' }}
+            </div>
           </div>
         </div>
 
-        <!-- Basketball -->
-        <div class="bg-[#052b23]/40 border border-emerald-800/35 rounded-xl p-3 flex items-center gap-2.5 transition-all hover:bg-[#052b23]/60">
-          <span class="text-xl">🏀</span>
+        <!-- Básquet -->
+        <div class="bg-[#052b23]/40 border border-emerald-800/35 rounded-xl p-3 flex items-center gap-2.5 transition-all hover:bg-[#052b23]/60 hover:border-emerald-700/50">
+          <!-- Basketball SVG: circle with vertical + 2 curved seam lines -->
+          <div class="flex-shrink-0 w-7 h-7 rounded-full bg-emerald-500/10 flex items-center justify-center">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="#00c58a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9"/>
+              <!-- vertical center seam -->
+              <line x1="12" y1="3" x2="12" y2="21"/>
+              <!-- horizontal center seam -->
+              <line x1="3" y1="12" x2="21" y2="12"/>
+              <!-- left arc -->
+              <path d="M12 3 Q6 7 6 12 Q6 17 12 21"/>
+              <!-- right arc -->
+              <path d="M12 3 Q18 7 18 12 Q18 17 12 21"/>
+            </svg>
+          </div>
           <div>
             <div class="text-xs font-semibold text-white">Básquet</div>
-            <div class="text-[9px] text-emerald-300/50">2 locales</div>
+            <div class="text-[9px] text-emerald-300/50">
+              {{ pitchCountBasquet }} {{ pitchCountBasquet === 1 ? 'cancha' : 'canchas' }}
+            </div>
           </div>
         </div>
+
       </div>
+
     </div>
 
     <!-- Footer Copyright -->
