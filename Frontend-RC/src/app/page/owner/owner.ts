@@ -1016,6 +1016,10 @@ export class OwnerDashboardComponent implements OnInit {
     return this.myBookings.filter(b => b.status === 'reserved');
   }
 
+  get pendingRequestsTotalAmount(): number {
+    return this.pendingRequests.reduce((sum, item) => sum + (item.price || 0), 0);
+  }
+
   getClientBookingCount(clientEmail: string): number {
     if (!clientEmail) return 0;
     return this.myBookings.filter(b => b.clientEmail === clientEmail && b.status !== 'cancelled').length;
