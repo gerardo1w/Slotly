@@ -12,7 +12,7 @@ interface ScheduleCell {
   dayName: string;
   date: string;
   timeSlot: string;
-  status: 'Libre' | 'Ocupado' | 'Reservado';
+  status: 'Libre' | 'Ocupado' | 'Reservado' | 'Pasado';
   bookingId?: string;
 }
 
@@ -48,6 +48,7 @@ export class BookingComponent implements OnInit {
   // Dialog State
   selectedCell: ScheduleCell | null = null;
   bookingModalVisible = false;
+  requestSuccessModalVisible = false;
 
   // History State
   myBookings: ResponseBookingGetAll[] = [];
@@ -156,9 +157,19 @@ export class BookingComponent implements OnInit {
       { label: '9:00 pm', slot: '21:00 - 22:00' }
     ];
 
+    const now = new Date();
+    const todayStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+    const currentHour = now.getHours();
+
     apiBookingGetAll(this.http, { complexId: this.selectedPitch.complexId }).subscribe(bookings => {
       this.scheduleRows = hours.map(h => {
+        const slotEndHour = parseInt(h.slot.split(' - ')[1].split(':')[0], 10);
+        
         const cells = this.weekDates.map((wDate, idx) => {
+          // Check if slot date/time is in the past
+          const isPastDate = wDate.date < todayStr;
+          const isTodayPastHour = (wDate.date === todayStr && currentHour >= slotEndHour);
+
           // Check for a booking matching pitch, date, and slot
           const b = bookings.find(booking => 
             booking.pitchId === this.selectedPitch?.id &&
@@ -167,8 +178,10 @@ export class BookingComponent implements OnInit {
             booking.status !== 'cancelled'
           );
 
-          let cellStatus: 'Libre' | 'Ocupado' | 'Reservado' = 'Libre';
-          if (b) {
+          let cellStatus: 'Libre' | 'Ocupado' | 'Reservado' | 'Pasado' = 'Libre';
+          if (isPastDate || isTodayPastHour) {
+            cellStatus = 'Pasado';
+          } else if (b) {
             cellStatus = b.status === 'reserved' ? 'Reservado' : 'Ocupado';
           }
 
@@ -197,7 +210,7 @@ export class BookingComponent implements OnInit {
     this.bookingModalVisible = true;
   }
 
-  confirmWhatsAppBooking() {
+  confirmBookingRequest() {
     if (!this.selectedCell || !this.selectedPitch || !this.currentUser || !this.selectedComplex) return;
 
     const cell = this.selectedCell;
@@ -216,29 +229,14 @@ export class BookingComponent implements OnInit {
     };
 
     apiBookingInsert(this.http, body).subscribe({
-      next: (b) => {
-        const dayNamesMap: { [key: string]: string } = {
-          'Lun': 'Lunes', 'Mar': 'Martes', 'Mié': 'Miércoles', 'Jue': 'Jueves', 'Vie': 'Viernes', 'Sáb': 'Sábado', 'Dom': 'Domingo'
-        };
-        const dayFull = dayNamesMap[cell.dayName] || cell.dayName;
-        
-        // Find hour label
-        const hourLabel = this.scheduleRows.find(r => r.timeSlot === cell.timeSlot)?.hourLabel || cell.timeSlot;
-        const message = `Hola, deseo reservar la cancha de ${body.sport} en ${body.complexName} para el ${dayFull} de ${hourLabel}.`;
-        
-        const phone = this.selectedComplex?.phone || '51987001001';
-        const waUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
-        
-        window.open(waUrl, '_blank');
-
+      next: () => {
         this.bookingModalVisible = false;
+        this.requestSuccessModalVisible = true;
         this.selectedCell = null;
-        
-        // Refresh schedule grid
         this.loadScheduleGrid();
       },
       error: (err) => {
-        console.error('Error creating booking', err);
+        console.error('Error enviando solicitud de reserva', err);
       }
     });
   }

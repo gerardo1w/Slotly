@@ -171,6 +171,9 @@
             <span class="flex items-center gap-1.5">
               <span class="w-2.5 h-2.5 rounded-full bg-[#ef4444]"></span> Ocupado
             </span>
+            <span class="flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-slate-300"></span> Pasado
+            </span>
           </div>
         </div>
 
@@ -198,9 +201,10 @@
                     [disabled]="cell.status !== 'Libre'"
                     (click)="onCellClick(cell)"
                     [ngClass]="{
-                      'bg-[#ecfdf5] border-[#a7f3d0] text-[#047857] hover:bg-[#d1fae5] hover:border-[#34d399] cursor-pointer': cell.status === 'Libre',
+                      'bg-[#ecfdf5] border-[#a7f3d0] text-[#047857] hover:bg-[#d1fae5] hover:border-[#34d399] cursor-pointer shadow-xs': cell.status === 'Libre',
                       'bg-[#fef2f2] border-[#fecaca] text-[#b91c1c]': cell.status === 'Ocupado',
-                      'bg-[#fffbeb] border-[#fef3c7] text-[#b45309]': cell.status === 'Reservado'
+                      'bg-[#fffbeb] border-[#fef3c7] text-[#b45309]': cell.status === 'Reservado',
+                      'bg-slate-100 border-slate-200 text-slate-400 opacity-60 cursor-not-allowed': cell.status === 'Pasado'
                     }"
                     class="w-full py-2 px-1 text-center font-bold text-[10px] rounded-xl border transition-all duration-200 select-none outline-none"
                   >
@@ -215,19 +219,16 @@
 
       </div>
 
-      <!-- Bottom CTA WhatsApp Footer -->
+      <!-- Bottom Information Banner -->
       <div class="max-w-5xl mx-auto mt-6 px-6">
         <div class="bg-white rounded-3xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4 border border-slate-100 shadow-sm">
           <div>
-            <h3 class="text-slate-800 font-extrabold text-sm leading-snug">¿Quieres reservar una cancha?</h3>
-            <p class="text-xs text-slate-400 mt-1 font-light">Elige un horario libre arriba o contáctanos directamente.</p>
+            <h3 class="text-slate-800 font-extrabold text-sm leading-snug">¿Cómo funciona la reserva?</h3>
+            <p class="text-xs text-slate-400 mt-1 font-light">Selecciona una casilla libre y envía tu solicitud. El dueño notificará la confirmación.</p>
           </div>
-          <button 
-            (click)="openGeneralWhatsApp()"
-            class="bg-[#25d366] hover:bg-[#20ba5a] active:bg-[#128c7e] text-white font-bold py-2.5 px-6 rounded-2xl flex items-center gap-2 text-xs shadow-md shadow-emerald-500/10 transition-all border-none outline-none cursor-pointer"
-          >
-            <i class="pi pi-whatsapp text-sm"></i> WhatsApp
-          </button>
+          <div class="flex items-center gap-2 text-xs font-bold text-[#00a775] bg-[#ecfdf5] px-4 py-2 rounded-2xl border border-emerald-100">
+            <i class="pi pi-check-circle"></i> Confirmación digital en plataforma
+          </div>
         </div>
       </div>
 
@@ -281,12 +282,12 @@
               </div>
             </div>
 
-            <!-- Action Button (WhatsApp Link) -->
+            <!-- Action Button (Confirm Direct Request) -->
             <button 
-              (click)="confirmWhatsAppBooking()"
-              class="bg-[#25d366] hover:bg-[#20ba5a] active:bg-[#128c7e] text-white font-extrabold py-3 rounded-2xl w-full shadow-lg shadow-emerald-500/10 transition-all duration-200 cursor-pointer border-none flex items-center justify-center gap-2 text-xs"
+              (click)="confirmBookingRequest()"
+              class="bg-[#00a775] hover:bg-[#009468] active:bg-[#007a56] text-white font-extrabold py-3 rounded-2xl w-full shadow-lg shadow-emerald-500/10 transition-all duration-200 cursor-pointer border-none flex items-center justify-center gap-2 text-xs"
             >
-              <i class="pi pi-whatsapp text-sm"></i> Reservar por WhatsApp
+              <i class="pi pi-send text-sm"></i> Enviar Solicitud al Dueño
             </button>
 
             <!-- Cancel Link -->
@@ -301,6 +302,25 @@
 
         </div>
 
+      </div>
+
+      <!-- Request Success Dialog Modal Overlay -->
+      <div *ngIf="requestSuccessModalVisible" class="fixed inset-0 bg-slate-900/65 backdrop-blur-xs flex items-center justify-center z-50 animate-fade-in px-4">
+        <div class="bg-white rounded-3xl w-full max-w-sm p-6 text-center shadow-2xl border border-slate-150 animate-slide-down flex flex-col items-center">
+          <div class="w-16 h-16 rounded-full bg-emerald-100 text-[#00a775] flex items-center justify-center mb-4 text-2xl shadow-inner">
+            <i class="pi pi-check"></i>
+          </div>
+          <h3 class="text-lg font-extrabold text-slate-800">¡Solicitud Enviada!</h3>
+          <p class="text-xs text-slate-500 font-medium mt-2 leading-relaxed">
+            Tu reserva para el turno seleccionado ha sido enviada al dueño del local. Podrás ver el estado en tu apartado <span class="font-bold text-slate-700">Mis Reservas</span>.
+          </p>
+          <button 
+            (click)="requestSuccessModalVisible = false"
+            class="mt-6 bg-[#00a775] hover:bg-[#009468] text-white font-bold py-2.5 px-6 rounded-2xl text-xs w-full transition-all border-none cursor-pointer shadow-md shadow-emerald-500/10"
+          >
+            Entendido
+          </button>
+        </div>
       </div>
 
     </div>

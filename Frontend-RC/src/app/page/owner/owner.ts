@@ -63,7 +63,7 @@ interface ScheduleRow {
 export class OwnerDashboardComponent implements OnInit {
   currentUser: UserProfile | null = null;
   myComplex: ResponseComplexGet | null = null;
-  activeSection: 'dashboard' | 'scheduler' | 'mis-canchas' | 'inventory' | 'expenses' | 'incomes' | 'closure' | 'mi-local' = 'dashboard';
+  activeSection: 'dashboard' | 'scheduler' | 'mis-canchas' | 'inventory' | 'expenses' | 'incomes' | 'closure' | 'mi-local' | 'requests' = 'dashboard';
 
   // Mi Local form fields
   complexFormName = '';
@@ -1009,6 +1009,65 @@ export class OwnerDashboardComponent implements OnInit {
 
     this.infoMessage = `Caja cerrada con éxito para el día ${this.closureDate}.`;
     setTimeout(() => { this.infoMessage = ''; }, 4000);
+  }
+
+  // --- Solicitudes de Reserva Methods ---
+  get pendingRequests(): ResponseBookingGetAll[] {
+    return this.myBookings.filter(b => b.status === 'reserved');
+  }
+
+  getClientBookingCount(clientEmail: string): number {
+    if (!clientEmail) return 0;
+    return this.myBookings.filter(b => b.clientEmail === clientEmail && b.status !== 'cancelled').length;
+  }
+
+  acceptBookingRequest(req: ResponseBookingGetAll) {
+    apiBookingCancel(this.http, req.id).subscribe({
+      next: () => {
+        const body = {
+          pitchId: req.pitchId,
+          complexId: req.complexId,
+          complexName: req.complexName,
+          pitchName: req.pitchName,
+          sport: req.sport,
+          clientName: req.clientName,
+          clientEmail: req.clientEmail,
+          date: req.date,
+          timeSlot: req.timeSlot,
+          price: req.price,
+          paymentMethod: (req.paymentMethod as any) || 'Yape',
+          status: 'active' as const
+        };
+        apiBookingInsert(this.http, body).subscribe({
+          next: () => {
+            this.infoMessage = `¡Solicitud de ${req.clientName} aceptada exitosamente!`;
+            setTimeout(() => { this.infoMessage = ''; }, 4000);
+            this.reloadBookingsAndGrid();
+          },
+          error: (err) => {
+            console.error('Error al aceptar solicitud', err);
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Error procesando aceptación', err);
+      }
+    });
+  }
+
+  rejectBookingRequest(reqId: string) {
+    if (confirm('¿Deseas rechazar esta solicitud de reserva?')) {
+      apiBookingCancel(this.http, reqId).subscribe({
+        next: () => {
+          this.infoMessage = 'Solicitud rechazada correctamente.';
+          setTimeout(() => { this.infoMessage = ''; }, 4000);
+          this.reloadBookingsAndGrid();
+        },
+        error: (err) => {
+          console.error('Error al rechazar solicitud', err);
+        }
+      });
+    }
   }
 
   logout() {
