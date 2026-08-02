@@ -23,6 +23,7 @@ com\epiis\reservacanchas\staticdata\EnumTransactionType.class
 com\epiis\reservacanchas\business\BusinessPitch.class
 com\epiis\reservacanchas\dto\response\ResponsePitchGet.class
 com\epiis\reservacanchas\entity\EntityUser.class
+com\epiis\reservacanchas\controller\RootController.class
 com\epiis\reservacanchas\dto\response\ResponseUserGet.class
 com\epiis\reservacanchas\generic\ResponseGeneric.class
 com\epiis\reservacanchas\dto\response\ResponseClosureGet.class
