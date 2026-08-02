@@ -57,94 +57,87 @@
     <!-- ============================================== -->
     <!-- NEW BOOKING DETAILS MODE (!isHistoryMode)       -->
     <!-- ============================================== -->
-    <div *ngIf="!isHistoryMode" class="pb-12">
-      <!-- Banner Top Section -->
-      <div class="h-64 lg:h-80 w-full relative bg-slate-800">
-        <img 
-          [src]="selectedComplex?.image" 
-          alt="complejo" 
-          class="w-full h-full object-cover opacity-60"
-        />
-        <div class="absolute inset-0 bg-gradient-to-t from-[#052820]/90 via-black/30 to-black/10"></div>
-        
-        <!-- Floating Back Button (optional, can keep for detail UX) -->
+    <div *ngIf="!isHistoryMode" class="py-6 px-6 lg:px-10 max-w-6xl mx-auto pb-12">
+      
+      <!-- Top Action Bar (Back button) -->
+      <div class="mb-5 flex items-center justify-between">
         <button 
           (click)="goBack()" 
-          class="absolute top-6 left-6 bg-black/35 hover:bg-black/50 text-white rounded-full px-4 py-2 text-xs font-bold backdrop-blur-sm border border-white/10 flex items-center gap-1.5 transition-all cursor-pointer"
+          class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 hover:text-slate-900 transition-all cursor-pointer shadow-xs"
         >
-          <i class="pi pi-arrow-left text-[10px]"></i> Volver
+          <i class="pi pi-arrow-left text-[11px]"></i> Volver a explorar canchas
         </button>
-
-        <!-- Floating Complex Details -->
-        <div class="absolute bottom-16 left-6 lg:left-12 text-white">
-          <span class="px-3 py-1.5 rounded-full text-[10px] font-bold bg-[#e0f2fe]/90 backdrop-blur-sm text-[#0369a1] inline-flex items-center gap-1.5 mb-2.5">
-            <svg *ngIf="selectedPitch?.sport === 'Fútbol'" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="9"/><path d="M12 7 L9.5 9.5 L10.5 13 L13.5 13 L14.5 9.5 Z"/><path d="M12 7 L12 3.1"/><path d="M9.5 9.5 L6 8"/><path d="M10.5 13 L8 16"/><path d="M13.5 13 L16 16"/><path d="M14.5 9.5 L18 8"/>
-            </svg>
-            <svg *ngIf="selectedPitch?.sport === 'Vóley'" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="9"/><path d="M12 3 Q7 7 7 12 Q7 17 12 21"/><path d="M3.5 8.5 Q8 10 11 14 Q14 18 20.5 18.5"/><path d="M3.5 15.5 Q8 14 11 10 Q14 6 20.5 5.5"/>
-            </svg>
-            <svg *ngIf="selectedPitch?.sport === 'Básquet'" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="9"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3 Q6 7 6 12 Q6 17 12 21"/><path d="M12 3 Q18 7 18 12 Q18 17 12 21"/>
-            </svg>
-            {{ selectedPitch?.sport }}
-          </span>
-          <h1 class="text-2xl lg:text-4xl font-extrabold tracking-tight leading-tight">
-            {{ selectedComplex?.name }}
-          </h1>
-          <p class="text-xs lg:text-sm text-emerald-100/70 mt-1.5 flex items-center gap-1.5 font-light">
-            <i class="pi pi-map-marker text-emerald-300"></i> {{ selectedComplex?.address }}
-            <span class="text-emerald-300 font-medium">★ {{ selectedComplex?.rating }}</span>
-          </p>
-        </div>
       </div>
 
-      <!-- Info Cards Section (Overlapping the banner) -->
-      <div class="max-w-5xl mx-auto -mt-10 px-6 relative z-10">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <!-- Minimalist Header Card -->
+      <div class="bg-white rounded-3xl p-6 lg:p-8 border border-slate-100 shadow-sm mb-8">
+        <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
           
-          <!-- Card 1: Horario -->
-          <div class="bg-white rounded-2xl p-4 flex items-center gap-3.5 shadow-sm border border-slate-100">
-            <div class="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center text-[#00a775]">
-              <i class="pi pi-clock text-sm"></i>
+          <!-- Title & Badges Left -->
+          <div class="space-y-2">
+            <div class="flex flex-wrap items-center gap-2.5">
+              <span class="px-3 py-1 rounded-full text-[11px] font-extrabold bg-[#ecfdf5] border border-emerald-100 text-[#00a775] inline-flex items-center gap-1.5">
+                <svg *ngIf="selectedPitch?.sport === 'Fútbol'" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="9"/><path d="M12 7 L9.5 9.5 L10.5 13 L13.5 13 L14.5 9.5 Z"/><path d="M12 7 L12 3.1"/><path d="M9.5 9.5 L6 8"/><path d="M10.5 13 L8 16"/><path d="M13.5 13 L16 16"/><path d="M14.5 9.5 L18 8"/>
+                </svg>
+                <svg *ngIf="selectedPitch?.sport === 'Vóley'" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="9"/><path d="M12 3 Q7 7 7 12 Q7 17 12 21"/><path d="M3.5 8.5 Q8 10 11 14 Q14 18 20.5 18.5"/><path d="M3.5 15.5 Q8 14 11 10 Q14 6 20.5 5.5"/>
+                </svg>
+                <svg *ngIf="selectedPitch?.sport === 'Básquet'" class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="9"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3 Q6 7 6 12 Q6 17 12 21"/><path d="M12 3 Q18 7 18 12 Q18 17 12 21"/>
+                </svg>
+                {{ selectedPitch?.sport }}
+              </span>
+              
+              <span *ngIf="selectedPitch?.name" class="px-3 py-1 rounded-full text-[11px] font-bold bg-slate-100 text-slate-600">
+                {{ selectedPitch?.name }}
+              </span>
             </div>
-            <div>
-              <span class="block text-[9px] font-bold uppercase tracking-wider text-slate-400">Horario</span>
-              <span class="text-xs font-extrabold text-slate-700 block mt-0.5">{{ selectedComplex?.timeRange }}</span>
-            </div>
+
+            <h1 class="text-2xl lg:text-3xl font-extrabold text-slate-800 tracking-tight leading-tight">
+              {{ selectedComplex?.name }}
+            </h1>
+
+            <p class="text-xs text-slate-500 flex items-center gap-2 font-medium">
+              <span class="flex items-center gap-1"><i class="pi pi-map-marker text-[#00a775]"></i> {{ selectedComplex?.address }}</span>
+              <span class="text-slate-300">•</span>
+              <span class="flex items-center gap-1 font-bold text-amber-500"><i class="pi pi-star-fill text-[10px]"></i> {{ selectedComplex?.rating }}</span>
+            </p>
           </div>
 
-          <!-- Card 2: Canchas -->
-          <div class="bg-white rounded-2xl p-4 flex items-center gap-3.5 shadow-sm border border-slate-100">
-            <div class="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center text-[#00a775]">
-              <i class="pi pi-th-large text-sm"></i>
+          <!-- Info Chips Right (Horario, Canchas, Precio) -->
+          <div class="grid grid-cols-3 gap-3 w-full lg:w-auto">
+            
+            <!-- Chip 1: Horario -->
+            <div class="bg-slate-50/80 rounded-2xl p-3.5 border border-slate-100 flex flex-col justify-center min-w-[120px]">
+              <span class="text-[9px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
+                <i class="pi pi-clock text-[#00a775]"></i> Horario
+              </span>
+              <span class="text-xs font-extrabold text-slate-700 mt-1 block">
+                {{ selectedComplex?.timeRange || '08:00 am - 10:00 pm' }}
+              </span>
             </div>
-            <div>
-              <span class="block text-[9px] font-bold uppercase tracking-wider text-slate-400">Canchas</span>
-              <span class="text-xs font-extrabold text-slate-700 block mt-0.5">{{ selectedComplex?.pitchesCount }} canchas</span>
-            </div>
-          </div>
 
-          <!-- Card 3: Precio -->
-          <div class="bg-white rounded-2xl p-4 flex items-center gap-3.5 shadow-sm border border-slate-100">
-            <div class="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center text-[#00a775]">
-              <i class="pi pi-dollar text-sm"></i>
+            <!-- Chip 2: Canchas -->
+            <div class="bg-slate-50/80 rounded-2xl p-3.5 border border-slate-100 flex flex-col justify-center min-w-[100px]">
+              <span class="text-[9px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
+                <i class="pi pi-th-large text-[#00a775]"></i> Canchas
+              </span>
+              <span class="text-xs font-extrabold text-slate-700 mt-1 block">
+                {{ selectedComplex?.pitchesCount || 1 }} cancha(s)
+              </span>
             </div>
-            <div>
-              <span class="block text-[9px] font-bold uppercase tracking-wider text-slate-400">Precio</span>
-              <span class="text-xs font-extrabold text-slate-700 block mt-0.5">S/ {{ selectedPitch?.pricePerHour | number:'1.2-2' }} / hr</span>
-            </div>
-          </div>
 
-          <!-- Card 4: WhatsApp -->
-          <div class="bg-white rounded-2xl p-4 flex items-center gap-3.5 shadow-sm border border-slate-100">
-            <div class="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center text-[#00a775]">
-              <i class="pi pi-phone text-sm"></i>
+            <!-- Chip 3: Precio -->
+            <div class="bg-emerald-50/60 rounded-2xl p-3.5 border border-emerald-100/60 flex flex-col justify-center min-w-[120px]">
+              <span class="text-[9px] font-bold uppercase tracking-wider text-emerald-600 flex items-center gap-1">
+                <i class="pi pi-dollar text-[#00a775]"></i> Precio/hr
+              </span>
+              <span class="text-xs font-extrabold text-emerald-800 mt-1 block">
+                S/ {{ selectedPitch?.pricePerHour | number:'1.2-2' }}
+              </span>
             </div>
-            <div>
-              <span class="block text-[9px] font-bold uppercase tracking-wider text-slate-400">WhatsApp</span>
-              <span class="text-xs font-extrabold text-slate-700 block mt-0.5">+{{ selectedComplex?.phone }}</span>
-            </div>
+
           </div>
 
         </div>
