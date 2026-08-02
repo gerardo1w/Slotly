@@ -252,6 +252,13 @@ export class BookingComponent implements OnInit {
   }
 
   goBack() {
+    this.isHistoryMode = false;
+    this.selectedPitchId = null;
     this.router.navigate(['/complex']);
+  }
+
+  logout() {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }

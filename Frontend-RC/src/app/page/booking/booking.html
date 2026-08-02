@@ -1,344 +1,393 @@
-<div *ngIf="!isHistoryMode" class="min-h-screen bg-[#f0f4f8] select-none font-sans overflow-x-hidden relative pb-12">
+<div class="flex min-h-screen bg-[#f0f4f8] font-sans">
   
-  <!-- Banner Top Section -->
-  <div class="h-64 lg:h-80 w-full relative bg-slate-800">
-    <img 
-      [src]="selectedComplex?.image" 
-      alt="complejo" 
-      class="w-full h-full object-cover opacity-60"
-    />
-    <div class="absolute inset-0 bg-gradient-to-t from-[#052820]/90 via-black/30 to-black/10"></div>
-    
-    <!-- Floating Back Button -->
-    <button 
-      (click)="goBack()" 
-      class="absolute top-6 left-6 bg-black/35 hover:bg-black/50 text-white rounded-full px-4 py-2 text-xs font-bold backdrop-blur-sm border border-white/10 flex items-center gap-1.5 transition-all cursor-pointer"
-    >
-      <i class="pi pi-arrow-left text-[10px]"></i> Volver
-    </button>
-
-    <!-- Floating Complex Details -->
-    <div class="absolute bottom-16 left-6 lg:left-12 text-white">
-      <span class="px-3 py-1 rounded-full text-[10px] font-bold bg-[#e0f2fe] text-[#0369a1] inline-flex items-center gap-1 mb-2.5">
-        <span>{{ selectedPitch?.sport === 'Fútbol' ? '⚽' : selectedPitch?.sport === 'Vóley' ? '🏐' : '🏀' }}</span> {{ selectedPitch?.sport }}
-      </span>
-      <h1 class="text-2xl lg:text-4xl font-extrabold tracking-tight leading-tight">
-        {{ selectedComplex?.name }}
-      </h1>
-      <p class="text-xs lg:text-sm text-emerald-100/70 mt-1.5 flex items-center gap-1.5 font-light">
-        <i class="pi pi-map-marker text-emerald-300"></i> {{ selectedComplex?.address }}
-        <span class="text-emerald-300 font-medium">★ {{ selectedComplex?.rating }}</span>
-      </p>
-    </div>
-  </div>
-
-  <!-- Info Cards Section (Overlapping the banner) -->
-  <div class="max-w-5xl mx-auto -mt-10 px-6 relative z-10">
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+  <!-- Sidebar Navigation Section (Client) -->
+  <aside class="w-64 bg-white border-r border-slate-100 flex flex-col justify-between p-6 flex-shrink-0">
+    <div class="space-y-6">
       
-      <!-- Card 1: Horario -->
-      <div class="bg-white rounded-2xl p-4 flex items-center gap-3.5 shadow-sm border border-slate-100">
-        <div class="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center text-[#00a775]">
-          <i class="pi pi-clock text-sm"></i>
-        </div>
-        <div>
-          <span class="block text-[9px] font-bold uppercase tracking-wider text-slate-400">Horario</span>
-          <span class="text-xs font-extrabold text-slate-700 block mt-0.5">{{ selectedComplex?.timeRange }}</span>
-        </div>
-      </div>
-
-      <!-- Card 2: Canchas -->
-      <div class="bg-white rounded-2xl p-4 flex items-center gap-3.5 shadow-sm border border-slate-100">
-        <div class="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center text-[#00a775]">
-          <i class="pi pi-th-large text-sm"></i>
-        </div>
-        <div>
-          <span class="block text-[9px] font-bold uppercase tracking-wider text-slate-400">Canchas</span>
-          <span class="text-xs font-extrabold text-slate-700 block mt-0.5">{{ selectedComplex?.pitchesCount }} canchas</span>
-        </div>
-      </div>
-
-      <!-- Card 3: Precio -->
-      <div class="bg-white rounded-2xl p-4 flex items-center gap-3.5 shadow-sm border border-slate-100">
-        <div class="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center text-[#00a775]">
-          <i class="pi pi-dollar text-sm"></i>
-        </div>
-        <div>
-          <span class="block text-[9px] font-bold uppercase tracking-wider text-slate-400">Precio</span>
-          <span class="text-xs font-extrabold text-slate-700 block mt-0.5">S/ {{ selectedPitch?.pricePerHour | number:'1.2-2' }} / hr</span>
-        </div>
-      </div>
-
-      <!-- Card 4: WhatsApp -->
-      <div class="bg-white rounded-2xl p-4 flex items-center gap-3.5 shadow-sm border border-slate-100">
-        <div class="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center text-[#00a775]">
-          <i class="pi pi-phone text-sm"></i>
-        </div>
-        <div>
-          <span class="block text-[9px] font-bold uppercase tracking-wider text-slate-400">WhatsApp</span>
-          <span class="text-xs font-extrabold text-slate-700 block mt-0.5">+{{ selectedComplex?.phone }}</span>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- Weekly Availability Grid -->
-  <div class="max-w-5xl mx-auto mt-8 px-6">
-    
-    <!-- Title & Legend -->
-    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 mb-4">
-      <div>
-        <h2 class="text-slate-800 font-extrabold text-lg tracking-tight">Disponibilidad Semanal</h2>
-        <p class="text-[11px] text-[#00a775] mt-0.5">Toca un horario <span class="font-bold">libre</span> para reservarlo.</p>
-      </div>
-
-      <!-- Legends -->
-      <div class="flex items-center gap-4 text-[10px] font-bold text-slate-500">
-        <span class="flex items-center gap-1.5">
-          <span class="w-2.5 h-2.5 rounded-full bg-[#10b981]"></span> Libre
-        </span>
-        <span class="flex items-center gap-1.5">
-          <span class="w-2.5 h-2.5 rounded-full bg-[#fbbf24]"></span> Reservado
-        </span>
-        <span class="flex items-center gap-1.5">
-          <span class="w-2.5 h-2.5 rounded-full bg-[#ef4444]"></span> Ocupado
-        </span>
-      </div>
-    </div>
-
-    <!-- Calendar Table Container -->
-    <div class="overflow-x-auto bg-white rounded-3xl border border-slate-100 shadow-sm p-4 animate-fade-in">
-      <table class="w-full text-center border-collapse min-w-[700px] table-fixed">
-        <thead>
-          <tr class="bg-[#052820] text-white">
-            <th class="py-3 px-2 text-xs font-bold rounded-l-2xl uppercase tracking-wider w-24">Hora</th>
-            <th *ngFor="let wDate of weekDates" class="py-3 px-2 text-xs font-bold uppercase tracking-wider">
-              {{ wDate.dayName }}
-              <span class="block text-[9px] text-emerald-150/60 font-light mt-0.5">{{ wDate.date | date:'dd/MM' }}</span>
-            </th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-100">
-          <tr *ngFor="let row of scheduleRows" class="hover:bg-slate-50/20 transition-all">
-            
-            <!-- Hour Label -->
-            <td class="py-3.5 px-2 text-xs font-bold text-slate-500 bg-slate-50/20 border-r border-slate-50">{{ row.hourLabel }}</td>
-            
-            <!-- Daily Cells -->
-            <td *ngFor="let cell of row.cells" class="py-1.5 px-1">
-              <button 
-                [disabled]="cell.status !== 'Libre'"
-                (click)="onCellClick(cell)"
-                [ngClass]="{
-                  'bg-[#ecfdf5] border-[#a7f3d0] text-[#047857] hover:bg-[#d1fae5] hover:border-[#34d399] cursor-pointer': cell.status === 'Libre',
-                  'bg-[#fef2f2] border-[#fecaca] text-[#b91c1c]': cell.status === 'Ocupado',
-                  'bg-[#fffbeb] border-[#fef3c7] text-[#b45309]': cell.status === 'Reservado'
-                }"
-                class="w-full py-2 px-1 text-center font-bold text-[10px] rounded-xl border transition-all duration-200 select-none outline-none"
-              >
-                {{ cell.status }}
-              </button>
-            </td>
-
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-  </div>
-
-  <!-- Bottom CTA WhatsApp Footer -->
-  <div class="max-w-5xl mx-auto mt-6 px-6">
-    <div class="bg-white rounded-3xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4 border border-slate-100 shadow-sm">
-      <div>
-        <h3 class="text-slate-800 font-extrabold text-sm leading-snug">¿Quieres reservar una cancha?</h3>
-        <p class="text-xs text-slate-400 mt-1 font-light">Elige un horario libre arriba o contáctanos directamente.</p>
-      </div>
-      <button 
-        (click)="openGeneralWhatsApp()"
-        class="bg-[#25d366] hover:bg-[#20ba5a] active:bg-[#128c7e] text-white font-bold py-2.5 px-6 rounded-2xl flex items-center gap-2 text-xs shadow-md shadow-emerald-500/10 transition-all border-none outline-none cursor-pointer"
-      >
-        <i class="pi pi-whatsapp text-sm"></i> WhatsApp
-      </button>
-    </div>
-  </div>
-
-  <!-- Booking Details Dialog Modal Overlay -->
-  <div *ngIf="bookingModalVisible" class="fixed inset-0 bg-slate-900/65 backdrop-blur-xs flex items-center justify-center z-50 animate-fade-in px-4">
-    
-    <!-- Modal Card -->
-    <div class="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl border border-slate-150 animate-slide-down flex flex-col">
-      
-      <!-- Modal Header (Dark Forest Green) -->
-      <div class="bg-[#052820] text-white p-6 relative flex flex-col items-center justify-center text-center">
-        <!-- Circular Sport Icon -->
-        <div class="w-12 h-12 rounded-full bg-emerald-500/20 text-white flex items-center justify-center text-2xl mb-2.5 border border-emerald-500/10 shadow-sm">
-          <span>{{ selectedPitch?.sport === 'Fútbol' ? '⚽' : selectedPitch?.sport === 'Vóley' ? '🏐' : '🏀' }}</span>
-        </div>
-        <h3 class="text-base font-extrabold tracking-tight leading-snug">{{ selectedComplex?.name }}</h3>
-        <p class="text-[10px] text-emerald-100/60 mt-1 leading-normal font-light flex items-center gap-1 justify-center">
-          <i class="pi pi-map-marker text-[9px]"></i> {{ selectedComplex?.address }}
-        </p>
-      </div>
-
-      <!-- Modal Body (White) -->
-      <div class="p-6 flex flex-col items-center">
-        
-        <!-- Selection summary box -->
-        <div class="w-full bg-[#f0fdf4] border border-[#bbf7d0] rounded-2xl p-4 mb-6">
-          <span class="block text-[8px] font-bold tracking-wider text-emerald-600 uppercase mb-1">Horario Seleccionado</span>
-          <h4 class="text-base font-extrabold text-slate-800 leading-tight">
-            {{ selectedCell?.dayName === 'Lun' ? 'Lunes' :
-               selectedCell?.dayName === 'Mar' ? 'Martes' :
-               selectedCell?.dayName === 'Mié' ? 'Miércoles' :
-               selectedCell?.dayName === 'Jue' ? 'Jueves' :
-               selectedCell?.dayName === 'Vie' ? 'Viernes' :
-               selectedCell?.dayName === 'Sáb' ? 'Sábado' : 'Domingo' }}
-          </h4>
-          <p class="text-xs font-medium text-slate-500 mt-1">
-            {{ scheduleRows[selectedCell?.dayIndex || 0]?.hourLabel || selectedCell?.timeSlot }} ({{ selectedCell?.timeSlot }})
-          </p>
-          <div class="border-t border-[#bbf7d0] my-3"></div>
-          <div class="flex items-center justify-between text-xs font-bold text-slate-700">
-            <span>Precio estimado</span>
-            <span class="text-emerald-700 font-extrabold">S/ {{ selectedPitch?.pricePerHour | number:'1.2-2' }}</span>
-          </div>
-        </div>
-
-        <!-- Action Button (WhatsApp Link) -->
-        <button 
-          (click)="confirmWhatsAppBooking()"
-          class="bg-[#25d366] hover:bg-[#20ba5a] active:bg-[#128c7e] text-white font-extrabold py-3 rounded-2xl w-full shadow-lg shadow-emerald-500/10 transition-all duration-200 cursor-pointer border-none flex items-center justify-center gap-2 text-xs"
-        >
-          <i class="pi pi-whatsapp text-sm"></i> Reservar por WhatsApp
-        </button>
-
-        <!-- Cancel Link -->
-        <button 
-          (click)="bookingModalVisible = false; selectedCell = null;"
-          class="mt-4 text-[11px] font-semibold text-slate-400 hover:text-slate-600 transition-colors bg-transparent border-none outline-none cursor-pointer"
-        >
-          Cancelar
-        </button>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</div>
-
-<!-- Booking History Mode View -->
-<div *ngIf="isHistoryMode" class="min-h-screen bg-[#f0f4f8] select-none font-sans overflow-x-hidden relative pb-12">
-  
-  <!-- Header: Dark Forest Green Header for History Page -->
-  <header class="bg-[#052820] text-white py-3.5 px-6 lg:px-12 flex items-center justify-between sticky top-0 z-40 shadow-md">
-    
-    <!-- Left Side: Brand Logo & Back Button -->
-    <div class="flex items-center gap-4">
-      <!-- Back button (Arrow Icon) -->
-      <button (click)="goBack()" class="w-8 h-8 rounded-full bg-[#183a32] hover:bg-[#1f4a3f] border border-emerald-850 text-white flex items-center justify-center transition-all cursor-pointer outline-none shadow-sm" title="Volver">
-        <i class="pi pi-arrow-left text-xs"></i>
-      </button>
-
-      <div class="flex items-center gap-2.5">
+      <!-- Brand Logo -->
+      <div class="flex items-center gap-2.5 px-2">
         <div class="w-8 h-8 rounded-full bg-[#00a775] flex items-center justify-center text-white shadow-sm">
           <i class="pi pi-bolt text-sm"></i>
         </div>
         <div>
-          <span class="text-base font-bold text-white tracking-wide leading-none block">Slotly</span>
-          <span class="block text-[7px] tracking-wider text-[#00c58a]/70 font-semibold uppercase mt-0.5">Gestión de Canchas Deportivas</span>
+          <span class="text-base font-bold text-slate-800 tracking-wide leading-none block">Slotly</span>
+          <span class="block text-[7px] tracking-wider text-[#00c58a]/70 font-semibold uppercase mt-0.5">Gestión de Canchas</span>
         </div>
       </div>
+
+      <!-- Navigation Tabs Menu List -->
+      <nav class="space-y-1.5 flex flex-col">
+        <button 
+          (click)="goBack()"
+          [ngClass]="!isHistoryMode ? 'bg-[#00a775] text-white shadow-sm font-extrabold' : 'text-slate-500 hover:bg-slate-50 font-medium bg-transparent'"
+          class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs transition-all border-none outline-none cursor-pointer w-full text-left"
+        >
+          <i class="pi pi-compass text-sm"></i> Explorar Canchas
+        </button>
+        <button 
+          (click)="isHistoryMode = true; selectedPitchId = null; loadHistory()"
+          [ngClass]="isHistoryMode ? 'bg-[#00a775] text-white shadow-sm font-extrabold' : 'text-slate-500 hover:bg-slate-50 font-medium bg-transparent'"
+          class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs transition-all border-none outline-none cursor-pointer w-full text-left"
+        >
+          <i class="pi pi-calendar text-sm"></i> Mis Reservas
+        </button>
+      </nav>
     </div>
 
-    <!-- Center: Title -->
-    <h2 class="text-sm font-bold uppercase tracking-wider text-emerald-150">Mis Reservas</h2>
-
-    <!-- Right Side: User Profile -->
-    <div *ngIf="currentUser" class="flex items-center gap-3.5">
-      <div class="flex items-center gap-2">
-        <div class="w-8 h-8 rounded-full bg-[#00a775] flex items-center justify-center text-white text-xs font-bold shadow-sm">
+    <!-- User Profile Footer block -->
+    <div class="border-t border-slate-100 pt-4 space-y-3">
+      <div *ngIf="currentUser" class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-full bg-[#00a775] flex items-center justify-center text-white text-xs font-bold shadow-sm uppercase">
           {{ currentUser.name ? (currentUser.name.split(' ')[0][0] + (currentUser.name.split(' ')[1] ? currentUser.name.split(' ')[1][0] : '')) : 'CM' }}
         </div>
-        <span class="hidden sm:inline text-xs font-bold text-slate-150">{{ currentUser.name }}</span>
+        <div>
+          <span class="block text-xs font-bold text-slate-800">{{ currentUser.name }}</span>
+          <span class="block text-[10px] text-slate-400 font-semibold">Cliente</span>
+        </div>
       </div>
-    </div>
-  </header>
-
-  <!-- Body Section -->
-  <div class="max-w-3xl mx-auto py-8 px-6">
-    
-    <!-- Header info -->
-    <div class="mb-6">
-      <h1 class="text-xl font-extrabold text-slate-800 tracking-tight">Historial de Reservas</h1>
-      <p class="text-xs text-slate-400 mt-1">Aquí puedes ver y gestionar las reservas que has realizado.</p>
-    </div>
-
-    <!-- Empty State -->
-    <div *ngIf="myBookings.length === 0" class="bg-white border border-slate-100 rounded-3xl p-16 text-center shadow-sm">
-      <div class="w-14 h-14 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 mx-auto mb-4">
-        <i class="pi pi-calendar text-xl"></i>
-      </div>
-      <h3 class="text-base font-bold text-slate-700 mb-1">Aún no tienes reservas</h3>
-      <p class="text-xs text-slate-400 max-w-sm mx-auto mb-5">Tus reservas activas y pasadas aparecerán aquí una vez que agendes una cancha.</p>
-      <button (click)="goBack()" class="bg-[#00a775] hover:bg-[#009468] text-white font-bold py-2.5 px-6 rounded-xl text-xs transition-all shadow-md shadow-emerald-500/10 border-none cursor-pointer">
-        Buscar Canchas Disponibles
+      <button (click)="logout()" class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-rose-500 hover:bg-rose-50 text-[10px] font-bold transition-all border-none outline-none cursor-pointer w-full text-left bg-transparent">
+        <i class="pi pi-sign-out"></i> Cerrar sesión
       </button>
     </div>
+  </aside>
 
-    <!-- Bookings list -->
-    <div *ngIf="myBookings.length > 0" class="space-y-4 animate-fade-in">
-      <div 
-        *ngFor="let booking of myBookings" 
-        class="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 transition-all hover:shadow"
-      >
-        <!-- Info left side -->
-        <div class="flex items-start gap-4">
-          <div class="w-11 h-11 rounded-full bg-emerald-50 flex items-center justify-center text-xl flex-shrink-0">
-            <span>{{ booking.sport === 'Fútbol' ? '⚽' : booking.sport === 'Vóley' ? '🏐' : '🏀' }}</span>
+  <!-- Main Content Scroll Area -->
+  <main class="flex-1 overflow-y-auto max-h-screen relative">
+    
+    <!-- ============================================== -->
+    <!-- NEW BOOKING DETAILS MODE (!isHistoryMode)       -->
+    <!-- ============================================== -->
+    <div *ngIf="!isHistoryMode" class="pb-12">
+      <!-- Banner Top Section -->
+      <div class="h-64 lg:h-80 w-full relative bg-slate-800">
+        <img 
+          [src]="selectedComplex?.image" 
+          alt="complejo" 
+          class="w-full h-full object-cover opacity-60"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-[#052820]/90 via-black/30 to-black/10"></div>
+        
+        <!-- Floating Back Button (optional, can keep for detail UX) -->
+        <button 
+          (click)="goBack()" 
+          class="absolute top-6 left-6 bg-black/35 hover:bg-black/50 text-white rounded-full px-4 py-2 text-xs font-bold backdrop-blur-sm border border-white/10 flex items-center gap-1.5 transition-all cursor-pointer"
+        >
+          <i class="pi pi-arrow-left text-[10px]"></i> Volver
+        </button>
+
+        <!-- Floating Complex Details -->
+        <div class="absolute bottom-16 left-6 lg:left-12 text-white">
+          <span class="px-3 py-1.5 rounded-full text-[10px] font-bold bg-[#e0f2fe]/90 backdrop-blur-sm text-[#0369a1] inline-flex items-center gap-1.5 mb-2.5">
+            <svg *ngIf="selectedPitch?.sport === 'Fútbol'" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9"/><path d="M12 7 L9.5 9.5 L10.5 13 L13.5 13 L14.5 9.5 Z"/><path d="M12 7 L12 3.1"/><path d="M9.5 9.5 L6 8"/><path d="M10.5 13 L8 16"/><path d="M13.5 13 L16 16"/><path d="M14.5 9.5 L18 8"/>
+            </svg>
+            <svg *ngIf="selectedPitch?.sport === 'Vóley'" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9"/><path d="M12 3 Q7 7 7 12 Q7 17 12 21"/><path d="M3.5 8.5 Q8 10 11 14 Q14 18 20.5 18.5"/><path d="M3.5 15.5 Q8 14 11 10 Q14 6 20.5 5.5"/>
+            </svg>
+            <svg *ngIf="selectedPitch?.sport === 'Básquet'" class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3 Q6 7 6 12 Q6 17 12 21"/><path d="M12 3 Q18 7 18 12 Q18 17 12 21"/>
+            </svg>
+            {{ selectedPitch?.sport }}
+          </span>
+          <h1 class="text-2xl lg:text-4xl font-extrabold tracking-tight leading-tight">
+            {{ selectedComplex?.name }}
+          </h1>
+          <p class="text-xs lg:text-sm text-emerald-100/70 mt-1.5 flex items-center gap-1.5 font-light">
+            <i class="pi pi-map-marker text-emerald-300"></i> {{ selectedComplex?.address }}
+            <span class="text-emerald-300 font-medium">★ {{ selectedComplex?.rating }}</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Info Cards Section (Overlapping the banner) -->
+      <div class="max-w-5xl mx-auto -mt-10 px-6 relative z-10">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          
+          <!-- Card 1: Horario -->
+          <div class="bg-white rounded-2xl p-4 flex items-center gap-3.5 shadow-sm border border-slate-100">
+            <div class="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center text-[#00a775]">
+              <i class="pi pi-clock text-sm"></i>
+            </div>
+            <div>
+              <span class="block text-[9px] font-bold uppercase tracking-wider text-slate-400">Horario</span>
+              <span class="text-xs font-extrabold text-slate-700 block mt-0.5">{{ selectedComplex?.timeRange }}</span>
+            </div>
           </div>
+
+          <!-- Card 2: Canchas -->
+          <div class="bg-white rounded-2xl p-4 flex items-center gap-3.5 shadow-sm border border-slate-100">
+            <div class="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center text-[#00a775]">
+              <i class="pi pi-th-large text-sm"></i>
+            </div>
+            <div>
+              <span class="block text-[9px] font-bold uppercase tracking-wider text-slate-400">Canchas</span>
+              <span class="text-xs font-extrabold text-slate-700 block mt-0.5">{{ selectedComplex?.pitchesCount }} canchas</span>
+            </div>
+          </div>
+
+          <!-- Card 3: Precio -->
+          <div class="bg-white rounded-2xl p-4 flex items-center gap-3.5 shadow-sm border border-slate-100">
+            <div class="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center text-[#00a775]">
+              <i class="pi pi-dollar text-sm"></i>
+            </div>
+            <div>
+              <span class="block text-[9px] font-bold uppercase tracking-wider text-slate-400">Precio</span>
+              <span class="text-xs font-extrabold text-slate-700 block mt-0.5">S/ {{ selectedPitch?.pricePerHour | number:'1.2-2' }} / hr</span>
+            </div>
+          </div>
+
+          <!-- Card 4: WhatsApp -->
+          <div class="bg-white rounded-2xl p-4 flex items-center gap-3.5 shadow-sm border border-slate-100">
+            <div class="w-9 h-9 rounded-xl bg-emerald-50 flex items-center justify-center text-[#00a775]">
+              <i class="pi pi-phone text-sm"></i>
+            </div>
+            <div>
+              <span class="block text-[9px] font-bold uppercase tracking-wider text-slate-400">WhatsApp</span>
+              <span class="text-xs font-extrabold text-slate-700 block mt-0.5">+{{ selectedComplex?.phone }}</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Weekly Availability Grid -->
+      <div class="max-w-5xl mx-auto mt-8 px-6">
+        
+        <!-- Title & Legend -->
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 mb-4">
           <div>
-            <h3 class="text-slate-800 font-extrabold text-sm leading-snug">{{ booking.complexName }}</h3>
-            <p class="text-xs text-slate-500 font-semibold mt-0.5">Cancha: {{ booking.pitchName }}</p>
-            <div class="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-[11px] text-slate-400 font-medium">
-              <span class="flex items-center gap-1"><i class="pi pi-calendar text-[10px]"></i> {{ booking.date | date:'dd/MM/yyyy' }}</span>
-              <span class="flex items-center gap-1"><i class="pi pi-clock text-[10px]"></i> {{ booking.timeSlot }}</span>
-            </div>
-            <div class="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-[11px] text-slate-400 font-medium">
-              <span class="flex items-center gap-1"><i class="pi pi-dollar text-[10px]"></i> S/ {{ booking.price | number:'1.2-2' }}</span>
-              <span class="flex items-center gap-1"><i class="pi pi-wallet text-[10px]"></i> Pago: {{ booking.paymentMethod }}</span>
-            </div>
+            <h2 class="text-slate-800 font-extrabold text-lg tracking-tight">Disponibilidad Semanal</h2>
+            <p class="text-[11px] text-[#00a775] mt-0.5">Toca un horario <span class="font-bold">libre</span> para reservarlo.</p>
+          </div>
+
+          <!-- Legends -->
+          <div class="flex items-center gap-4 text-[10px] font-bold text-slate-500">
+            <span class="flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#10b981]"></span> Libre
+            </span>
+            <span class="flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#fbbf24]"></span> Reservado
+            </span>
+            <span class="flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-[#ef4444]"></span> Ocupado
+            </span>
           </div>
         </div>
 
-        <!-- Badges & Action right side -->
-        <div class="flex sm:flex-col items-end justify-between w-full sm:w-auto gap-3 self-stretch sm:self-center">
-          <!-- Status Badge -->
-          <span 
-            [ngClass]="{
-              'bg-[#ecfdf5] border-[#a7f3d0] text-[#047857]': booking.status === 'active',
-              'bg-[#fffbeb] border-[#fef3c7] text-[#b45309]': booking.status === 'reserved',
-              'bg-[#fef2f2] border-[#fecaca] text-[#b91c1c]': booking.status === 'cancelled'
-            }"
-            class="px-3 py-1 rounded-full text-[10px] font-bold border inline-block select-none"
-          >
-            {{ booking.status === 'active' ? 'Confirmada' : booking.status === 'reserved' ? 'Reservada' : 'Cancelada' }}
-          </span>
+        <!-- Calendar Table Container -->
+        <div class="overflow-x-auto bg-white rounded-3xl border border-slate-100 shadow-sm p-4 animate-fade-in">
+          <table class="w-full text-center border-collapse min-w-[700px] table-fixed">
+            <thead>
+              <tr class="bg-[#052820] text-white">
+                <th class="py-3 px-2 text-xs font-bold rounded-l-2xl uppercase tracking-wider w-24">Hora</th>
+                <th *ngFor="let wDate of weekDates" class="py-3 px-2 text-xs font-bold uppercase tracking-wider">
+                  {{ wDate.dayName }}
+                  <span class="block text-[9px] text-emerald-150/60 font-light mt-0.5">{{ wDate.date | date:'dd/MM' }}</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr *ngFor="let row of scheduleRows" class="hover:bg-slate-50/20 transition-all">
+                
+                <!-- Hour Label -->
+                <td class="py-3.5 px-2 text-xs font-bold text-slate-500 bg-slate-50/20 border-r border-slate-50">{{ row.hourLabel }}</td>
+                
+                <!-- Daily Cells -->
+                <td *ngFor="let cell of row.cells" class="py-1.5 px-1">
+                  <button 
+                    [disabled]="cell.status !== 'Libre'"
+                    (click)="onCellClick(cell)"
+                    [ngClass]="{
+                      'bg-[#ecfdf5] border-[#a7f3d0] text-[#047857] hover:bg-[#d1fae5] hover:border-[#34d399] cursor-pointer': cell.status === 'Libre',
+                      'bg-[#fef2f2] border-[#fecaca] text-[#b91c1c]': cell.status === 'Ocupado',
+                      'bg-[#fffbeb] border-[#fef3c7] text-[#b45309]': cell.status === 'Reservado'
+                    }"
+                    class="w-full py-2 px-1 text-center font-bold text-[10px] rounded-xl border transition-all duration-200 select-none outline-none"
+                  >
+                    {{ cell.status }}
+                  </button>
+                </td>
 
-          <!-- Cancel Button -->
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+      <!-- Bottom CTA WhatsApp Footer -->
+      <div class="max-w-5xl mx-auto mt-6 px-6">
+        <div class="bg-white rounded-3xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4 border border-slate-100 shadow-sm">
+          <div>
+            <h3 class="text-slate-800 font-extrabold text-sm leading-snug">¿Quieres reservar una cancha?</h3>
+            <p class="text-xs text-slate-400 mt-1 font-light">Elige un horario libre arriba o contáctanos directamente.</p>
+          </div>
           <button 
-            *ngIf="booking.status !== 'cancelled'" 
-            (click)="cancelBooking(booking.id)"
-            class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100/60 font-bold text-[10px] py-1.5 px-3.5 rounded-xl transition-all cursor-pointer border border-red-100/55 flex items-center gap-1 focus:outline-none"
+            (click)="openGeneralWhatsApp()"
+            class="bg-[#25d366] hover:bg-[#20ba5a] active:bg-[#128c7e] text-white font-bold py-2.5 px-6 rounded-2xl flex items-center gap-2 text-xs shadow-md shadow-emerald-500/10 transition-all border-none outline-none cursor-pointer"
           >
-            Cancelar Reserva
+            <i class="pi pi-whatsapp text-sm"></i> WhatsApp
           </button>
         </div>
       </div>
+
+      <!-- Booking Details Dialog Modal Overlay -->
+      <div *ngIf="bookingModalVisible" class="fixed inset-0 bg-slate-900/65 backdrop-blur-xs flex items-center justify-center z-50 animate-fade-in px-4">
+        
+        <!-- Modal Card -->
+        <div class="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl border border-slate-150 animate-slide-down flex flex-col">
+          
+          <!-- Modal Header (Dark Forest Green) -->
+          <div class="bg-[#052820] text-white p-6 relative flex flex-col items-center justify-center text-center">
+            <!-- Circular Sport Icon -->
+            <div class="w-12 h-12 rounded-full bg-emerald-500/20 text-white flex items-center justify-center mb-2.5 border border-emerald-500/10 shadow-sm">
+              <svg *ngIf="selectedPitch?.sport === 'Fútbol'" class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"/><path d="M12 7 L9.5 9.5 L10.5 13 L13.5 13 L14.5 9.5 Z"/><path d="M12 7 L12 3.1"/><path d="M9.5 9.5 L6 8"/><path d="M10.5 13 L8 16"/><path d="M13.5 13 L16 16"/><path d="M14.5 9.5 L18 8"/>
+              </svg>
+              <svg *ngIf="selectedPitch?.sport === 'Vóley'" class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"/><path d="M12 3 Q7 7 7 12 Q7 17 12 21"/><path d="M3.5 8.5 Q8 10 11 14 Q14 18 20.5 18.5"/><path d="M3.5 15.5 Q8 14 11 10 Q14 6 20.5 5.5"/>
+              </svg>
+              <svg *ngIf="selectedPitch?.sport === 'Básquet'" class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3 Q6 7 6 12 Q6 17 12 21"/><path d="M12 3 Q18 7 18 12 Q18 17 12 21"/>
+              </svg>
+            </div>
+            <h3 class="text-base font-extrabold tracking-tight leading-snug">{{ selectedComplex?.name }}</h3>
+            <p class="text-[10px] text-emerald-100/60 mt-1 leading-normal font-light flex items-center gap-1 justify-center">
+              <i class="pi pi-map-marker text-[9px]"></i> {{ selectedComplex?.address }}
+            </p>
+          </div>
+
+          <!-- Modal Body (White) -->
+          <div class="p-6 flex flex-col items-center">
+            
+            <!-- Selection summary box -->
+            <div class="w-full bg-[#f0fdf4] border border-[#bbf7d0] rounded-2xl p-4 mb-6">
+              <span class="block text-[8px] font-bold tracking-wider text-emerald-600 uppercase mb-1">Horario Seleccionado</span>
+              <h4 class="text-base font-extrabold text-slate-800 leading-tight">
+                {{ selectedCell?.dayName === 'Lun' ? 'Lunes' :
+                   selectedCell?.dayName === 'Mar' ? 'Martes' :
+                   selectedCell?.dayName === 'Mié' ? 'Miércoles' :
+                   selectedCell?.dayName === 'Jue' ? 'Jueves' :
+                   selectedCell?.dayName === 'Vie' ? 'Viernes' :
+                   selectedCell?.dayName === 'Sáb' ? 'Sábado' : 'Domingo' }}
+              </h4>
+              <p class="text-xs font-medium text-slate-500 mt-1">
+                {{ scheduleRows[selectedCell?.dayIndex || 0]?.hourLabel || selectedCell?.timeSlot }} ({{ selectedCell?.timeSlot }})
+              </p>
+              <div class="border-t border-[#bbf7d0] my-3"></div>
+              <div class="flex items-center justify-between text-xs font-bold text-slate-700">
+                <span>Precio estimado</span>
+                <span class="text-emerald-700 font-extrabold">S/ {{ selectedPitch?.pricePerHour | number:'1.2-2' }}</span>
+              </div>
+            </div>
+
+            <!-- Action Button (WhatsApp Link) -->
+            <button 
+              (click)="confirmWhatsAppBooking()"
+              class="bg-[#25d366] hover:bg-[#20ba5a] active:bg-[#128c7e] text-white font-extrabold py-3 rounded-2xl w-full shadow-lg shadow-emerald-500/10 transition-all duration-200 cursor-pointer border-none flex items-center justify-center gap-2 text-xs"
+            >
+              <i class="pi pi-whatsapp text-sm"></i> Reservar por WhatsApp
+            </button>
+
+            <!-- Cancel Link -->
+            <button 
+              (click)="bookingModalVisible = false; selectedCell = null;"
+              class="mt-4 text-[11px] font-semibold text-slate-400 hover:text-slate-600 transition-colors bg-transparent border-none outline-none cursor-pointer"
+            >
+              Cancelar
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
     </div>
 
-  </div>
+    <!-- ============================================== -->
+    <!-- HISTORY MODE (isHistoryMode)                   -->
+    <!-- ============================================== -->
+    <div *ngIf="isHistoryMode" class="py-6 px-8">
+      
+      <!-- Header info -->
+      <div class="mb-6">
+        <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Historial de Reservas</h1>
+        <p class="text-xs text-slate-500 mt-1">Aquí puedes ver y gestionar las reservas que has realizado.</p>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="myBookings.length === 0" class="bg-white border border-slate-100 rounded-3xl p-16 text-center shadow-sm max-w-4xl mx-auto">
+        <div class="w-14 h-14 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 mx-auto mb-4">
+          <i class="pi pi-calendar text-xl"></i>
+        </div>
+        <h3 class="text-base font-bold text-slate-700 mb-1">Aún no tienes reservas</h3>
+        <p class="text-xs text-slate-400 max-w-sm mx-auto mb-5">Tus reservas activas y pasadas aparecerán aquí una vez que agendes una cancha.</p>
+        <button (click)="goBack()" class="bg-[#00a775] hover:bg-[#009468] text-white font-bold py-2.5 px-6 rounded-xl text-xs transition-all shadow-md shadow-emerald-500/10 border-none cursor-pointer">
+          Buscar Canchas Disponibles
+        </button>
+      </div>
+
+      <!-- Bookings list -->
+      <div *ngIf="myBookings.length > 0" class="space-y-4 animate-fade-in max-w-4xl mx-auto">
+        <div 
+          *ngFor="let booking of myBookings" 
+          class="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 transition-all hover:shadow"
+        >
+          <!-- Info left side -->
+          <div class="flex items-start gap-4">
+            <div class="w-11 h-11 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 flex-shrink-0">
+              <svg *ngIf="booking.sport === 'Fútbol'" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"/><path d="M12 7 L9.5 9.5 L10.5 13 L13.5 13 L14.5 9.5 Z"/><path d="M12 7 L12 3.1"/><path d="M9.5 9.5 L6 8"/><path d="M10.5 13 L8 16"/><path d="M13.5 13 L16 16"/><path d="M14.5 9.5 L18 8"/>
+              </svg>
+              <svg *ngIf="booking.sport === 'Vóley'" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"/><path d="M12 3 Q7 7 7 12 Q7 17 12 21"/><path d="M3.5 8.5 Q8 10 11 14 Q14 18 20.5 18.5"/><path d="M3.5 15.5 Q8 14 11 10 Q14 6 20.5 5.5"/>
+              </svg>
+              <svg *ngIf="booking.sport === 'Básquet'" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="9"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3 Q6 7 6 12 Q6 17 12 21"/><path d="M12 3 Q18 7 18 12 Q18 17 12 21"/>
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-slate-800 font-extrabold text-sm leading-snug">{{ booking.complexName }}</h3>
+              <p class="text-xs text-slate-500 font-semibold mt-0.5">Cancha: {{ booking.pitchName }}</p>
+              <div class="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-[11px] text-slate-400 font-medium">
+                <span class="flex items-center gap-1"><i class="pi pi-calendar text-[10px]"></i> {{ booking.date | date:'dd/MM/yyyy' }}</span>
+                <span class="flex items-center gap-1"><i class="pi pi-clock text-[10px]"></i> {{ booking.timeSlot }}</span>
+              </div>
+              <div class="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-[11px] text-slate-400 font-medium">
+                <span class="flex items-center gap-1"><i class="pi pi-dollar text-[10px]"></i> S/ {{ booking.price | number:'1.2-2' }}</span>
+                <span class="flex items-center gap-1"><i class="pi pi-wallet text-[10px]"></i> Pago: {{ booking.paymentMethod }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Badges & Action right side -->
+          <div class="flex sm:flex-col items-end justify-between w-full sm:w-auto gap-3 self-stretch sm:self-center">
+            <!-- Status Badge -->
+            <span 
+              [ngClass]="{
+                'bg-[#ecfdf5] border-[#a7f3d0] text-[#047857]': booking.status === 'active',
+                'bg-[#fffbeb] border-[#fef3c7] text-[#b45309]': booking.status === 'reserved',
+                'bg-[#fef2f2] border-[#fecaca] text-[#b91c1c]': booking.status === 'cancelled'
+              }"
+              class="px-3 py-1 rounded-full text-[10px] font-bold border inline-block select-none"
+            >
+              {{ booking.status === 'active' ? 'Confirmada' : booking.status === 'reserved' ? 'Reservada' : 'Cancelada' }}
+            </span>
+
+            <!-- Cancel Button -->
+            <button 
+              *ngIf="booking.status !== 'cancelled'" 
+              (click)="cancelBooking(booking.id)"
+              class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100/60 font-bold text-[10px] py-1.5 px-3.5 rounded-xl transition-all cursor-pointer border border-red-100/55 flex items-center gap-1 focus:outline-none"
+            >
+              Cancelar Reserva
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
 </div>
