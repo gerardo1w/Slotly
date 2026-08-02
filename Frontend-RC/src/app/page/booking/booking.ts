@@ -225,7 +225,8 @@ export class BookingComponent implements OnInit {
       date: cell.date,
       timeSlot: cell.timeSlot,
       price: this.selectedPitch.pricePerHour,
-      paymentMethod: 'Yape' as const
+      paymentMethod: 'Yape' as const,
+      status: 'reserved' as const
     };
 
     apiBookingInsert(this.http, body).subscribe({
