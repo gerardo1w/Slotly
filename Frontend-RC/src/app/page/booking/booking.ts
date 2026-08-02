@@ -163,27 +163,39 @@ export class BookingComponent implements OnInit {
 
     apiBookingGetAll(this.http, { complexId: this.selectedPitch.complexId }).subscribe(bookings => {
       this.scheduleRows = hours.map(h => {
-        const slotEndHour = parseInt(h.slot.split(' - ')[1].split(':')[0], 10);
-        
+        // The slot START hour (e.g., '16:00 - 17:00' → start=16, end=17)
+        const slotStartHour = parseInt(h.slot.split(' - ')[0].split(':')[0], 10);
+        const slotEndHour   = parseInt(h.slot.split(' - ')[1].split(':')[0], 10);
+
         const cells = this.weekDates.map((wDate, idx) => {
-          // Check if slot date/time is in the past
+          // ── 1. Is this slot date/time already in the past? ──────────────────
           const isPastDate = wDate.date < todayStr;
           const isTodayPastHour = (wDate.date === todayStr && currentHour >= slotEndHour);
 
-          // Check for a booking matching pitch, date, and slot
-          const b = bookings.find(booking => 
+          // ── 2. Find the most relevant booking for this pitch+date+slot ───────
+          //    We ignore 'reserved' bookings entirely for the calendar display
+          //    (they remain Libre so other users can also request the same slot).
+          //    Only an ACCEPTED ('active') booking blocks the calendar visually.
+          const activeBooking = bookings.find(booking =>
             booking.pitchId === this.selectedPitch?.id &&
             booking.date === wDate.date &&
             booking.timeSlot === h.slot &&
-            booking.status !== 'cancelled'
+            booking.status === 'active'          // Only confirmed bookings block the slot
           );
 
+          // ── 3. Determine visual cell status ─────────────────────────────────
           let cellStatus: 'Libre' | 'Ocupado' | 'Reservado' | 'Pasado' = 'Libre';
+
           if (isPastDate || isTodayPastHour) {
+            // Date/time already passed → gray regardless of booking
             cellStatus = 'Pasado';
-          } else if (b) {
-            cellStatus = b.status === 'reserved' ? 'Reservado' : 'Ocupado';
+          } else if (activeBooking) {
+            // Slot is today, booking is active, and the time has just arrived → Ocupado
+            const isToday = wDate.date === todayStr;
+            const timeHasArrived = isToday && currentHour >= slotStartHour;
+            cellStatus = timeHasArrived ? 'Ocupado' : 'Reservado';
           }
+          // If booking.status === 'reserved' (pending owner approval) → cellStatus stays 'Libre'
 
           return {
             dayIndex: idx,
@@ -191,7 +203,7 @@ export class BookingComponent implements OnInit {
             date: wDate.date,
             timeSlot: h.slot,
             status: cellStatus,
-            bookingId: b?.id
+            bookingId: activeBooking?.id
           };
         });
 
@@ -203,6 +215,7 @@ export class BookingComponent implements OnInit {
       });
     });
   }
+
 
   onCellClick(cell: ScheduleCell) {
     if (cell.status !== 'Libre') return; // Only free slots are clickable

@@ -1025,6 +1025,21 @@ export class OwnerDashboardComponent implements OnInit {
     return this.myBookings.filter(b => b.clientEmail === clientEmail && b.status !== 'cancelled').length;
   }
 
+  /** Returns a human-readable string of when the booking request was submitted */
+  formatRequestTime(createdAt?: string): string {
+    if (!createdAt) return 'Hora desconocida';
+    const d = new Date(createdAt);
+    const now = new Date();
+    const todayStr = now.toLocaleDateString('es-PE');
+    const dateStr = d.toLocaleDateString('es-PE');
+    const timeStr = d.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' });
+    if (dateStr === todayStr) {
+      return `hoy, ${timeStr}`;
+    }
+    return `${dateStr}, ${timeStr}`;
+  }
+
+
   acceptBookingRequest(req: ResponseBookingGetAll) {
     apiBookingCancel(this.http, req.id).subscribe({
       next: () => {

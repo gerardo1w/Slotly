@@ -160,4 +160,39 @@ public class BusinessBooking {
         response.getListMessage().add("Reserva cancelada exitosamente.");
         return response;
     }
+
+    @Transactional
+    public ResponseBookingGet updateStatus(RequestBookingStatusUpdate request) {
+        ResponseBookingGet response = new ResponseBookingGet();
+        Optional<EntityBooking> optionalBooking = repositoryBooking.findById(request.getBookingId());
+
+        if (optionalBooking.isEmpty()) {
+            response.error();
+            response.getListMessage().add("Reserva no encontrada.");
+            return response;
+        }
+
+        EntityBooking booking = optionalBooking.get();
+        booking.setStatus(EnumBookingStatus.fromValue(request.getStatus()));
+        booking.setUpdatedAt(new Date());
+        repositoryBooking.save(booking);
+
+        response.setId(booking.getIdBooking());
+        response.setPitchId(booking.getPitchId());
+        response.setComplexId(booking.getComplexId());
+        response.setComplexName(booking.getComplexName());
+        response.setPitchName(booking.getPitchName());
+        response.setSport(booking.getSport());
+        response.setClientName(booking.getClientName());
+        response.setClientEmail(booking.getClientEmail());
+        response.setDate(booking.getDate());
+        response.setTimeSlot(booking.getTimeSlot());
+        response.setPrice(booking.getPrice());
+        response.setStatus(booking.getStatus().name().toLowerCase());
+        response.setPaymentMethod(booking.getPaymentMethod());
+
+        response.success();
+        response.getListMessage().add("Estado de la reserva actualizado exitosamente.");
+        return response;    
+    }
 }

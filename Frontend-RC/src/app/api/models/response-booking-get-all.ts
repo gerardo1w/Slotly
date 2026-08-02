@@ -12,4 +12,5 @@ export interface ResponseBookingGetAll {
   price: number;
   status: 'active' | 'cancelled' | 'reserved';
   paymentMethod: 'Yape' | 'Plin' | 'Culqi';
+  createdAt?: string; // ISO timestamp when the booking request was submitted
 }

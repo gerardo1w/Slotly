@@ -1100,7 +1100,16 @@
                   <i class="pi pi-dollar text-[11px]"></i> S/ {{ req.price | number:'1.2-2' }}
                 </span>
               </div>
+
+              <!-- Submitted At timestamp -->
+              <div class="flex items-center gap-1.5 mt-2">
+                <span class="inline-flex items-center gap-1.5 bg-amber-50 border border-amber-200 text-amber-700 text-[10px] font-bold px-2.5 py-1 rounded-full">
+                  <i class="pi pi-send text-[9px]"></i>
+                  Solicitud enviada: {{ formatRequestTime(req.createdAt) }}
+                </span>
+              </div>
             </div>
+
           </div>
 
           <!-- Actions Right -->
