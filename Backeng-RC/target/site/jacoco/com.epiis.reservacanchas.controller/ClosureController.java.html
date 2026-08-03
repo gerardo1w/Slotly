@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ClosureController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">reserva-canchas-backend</a> &gt; <a href="index.source.html" class="el_package">com.epiis.reservacanchas.controller</a> &gt; <span class="el_source">ClosureController.java</span></div><h1>ClosureController.java</h1><pre class="source lang-java linenums">package com.epiis.reservacanchas.controller;
+
+import com.epiis.reservacanchas.business.BusinessClosure;
+import com.epiis.reservacanchas.dto.request.RequestClosureInsert;
+import com.epiis.reservacanchas.dto.response.ResponseClosureGet;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping(&quot;/api/cierres&quot;)
+public class ClosureController {
+
+    private final BusinessClosure businessClosure;
+
+<span class="nc" id="L19">    public ClosureController(BusinessClosure businessClosure) {</span>
+<span class="nc" id="L20">        this.businessClosure = businessClosure;</span>
+<span class="nc" id="L21">    }</span>
+
+    @GetMapping
+    public ResponseEntity&lt;List&lt;Map&lt;String, Object&gt;&gt;&gt; actionGetAll(@RequestParam String complexId) {
+<span class="nc" id="L25">        return ResponseEntity.ok(businessClosure.getAll(complexId));</span>
+    }
+
+    @PostMapping
+    public ResponseEntity&lt;ResponseClosureGet&gt; actionInsert(
+            @Valid @RequestBody RequestClosureInsert request, BindingResult bindingResult) {
+<span class="nc bnc" id="L31" title="All 2 branches missed.">        if (bindingResult.hasErrors()) {</span>
+<span class="nc" id="L32">            ResponseClosureGet response = new ResponseClosureGet();</span>
+<span class="nc" id="L33">            response.error();</span>
+<span class="nc" id="L34">            bindingResult.getAllErrors().forEach(error -&gt; response.getListMessage().add(error.getDefaultMessage()));</span>
+<span class="nc" id="L35">            return ResponseEntity.badRequest().body(response);</span>
+        }
+<span class="nc" id="L37">        return ResponseEntity.ok(businessClosure.insert(request));</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

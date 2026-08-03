@@ -1,0 +1,6 @@
+com\epiis\reservacanchas\business\BusinessUserTest.class
+com\epiis\reservacanchas\business\BusinessTransactionTest.class
+com\epiis\reservacanchas\business\BusinessComplexTest.class
+com\epiis\reservacanchas\business\BusinessClosureTest.class
+com\epiis\reservacanchas\business\BusinessPitchTest.class
+com\epiis\reservacanchas\business\BusinessBookingTest.class

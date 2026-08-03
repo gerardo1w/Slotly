@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BusinessPitch.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">reserva-canchas-backend</a> &gt; <a href="index.source.html" class="el_package">com.epiis.reservacanchas.business</a> &gt; <span class="el_source">BusinessPitch.java</span></div><h1>BusinessPitch.java</h1><pre class="source lang-java linenums">package com.epiis.reservacanchas.business;
+
+import com.epiis.reservacanchas.entity.EntityPitch;
+import com.epiis.reservacanchas.entity.EntityComplex;
+import com.epiis.reservacanchas.repository.RepositoryPitch;
+import com.epiis.reservacanchas.repository.RepositoryComplex;
+import com.epiis.reservacanchas.dto.request.RequestPitchInsert;
+import com.epiis.reservacanchas.dto.request.RequestPitchUpdate;
+import com.epiis.reservacanchas.dto.response.ResponsePitchGet;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.util.*;
+
+@Service
+public class BusinessPitch {
+
+    private final RepositoryPitch repositoryPitch;
+    private final RepositoryComplex repositoryComplex;
+
+<span class="fc" id="L20">    public BusinessPitch(RepositoryPitch repositoryPitch, RepositoryComplex repositoryComplex) {</span>
+<span class="fc" id="L21">        this.repositoryPitch = repositoryPitch;</span>
+<span class="fc" id="L22">        this.repositoryComplex = repositoryComplex;</span>
+<span class="fc" id="L23">    }</span>
+
+    @Transactional(readOnly = true)
+    public List&lt;Map&lt;String, Object&gt;&gt; getAll(String complexId) {
+        List&lt;EntityPitch&gt; pitches;
+<span class="pc bpc" id="L28" title="1 of 4 branches missed.">        if (complexId != null &amp;&amp; !complexId.isEmpty()) {</span>
+<span class="fc" id="L29">            pitches = repositoryPitch.findByComplexId(complexId);</span>
+        } else {
+<span class="fc" id="L31">            pitches = repositoryPitch.findAll();</span>
+        }
+
+<span class="fc" id="L34">        List&lt;Map&lt;String, Object&gt;&gt; list = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L35" title="All 2 branches covered.">        for (EntityPitch p : pitches) {</span>
+<span class="fc" id="L36">            Map&lt;String, Object&gt; map = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc" id="L37">            map.put(&quot;id&quot;, p.getIdPitch());</span>
+<span class="fc" id="L38">            map.put(&quot;complexId&quot;, p.getComplexId());</span>
+<span class="fc" id="L39">            map.put(&quot;name&quot;, p.getName());</span>
+<span class="fc" id="L40">            map.put(&quot;sport&quot;, p.getSport());</span>
+<span class="fc" id="L41">            map.put(&quot;pricePerHour&quot;, p.getPricePerHour());</span>
+<span class="fc" id="L42">            map.put(&quot;image&quot;, p.getImage());</span>
+<span class="fc" id="L43">            map.put(&quot;active&quot;, p.getActive());</span>
+<span class="fc" id="L44">            list.add(map);</span>
+<span class="fc" id="L45">        }</span>
+<span class="fc" id="L46">        return list;</span>
+    }
+
+    @Transactional
+    public ResponsePitchGet insert(RequestPitchInsert request) {
+<span class="fc" id="L51">        ResponsePitchGet response = new ResponsePitchGet();</span>
+
+<span class="fc" id="L53">        Optional&lt;EntityComplex&gt; optionalComplex = repositoryComplex.findById(request.getComplexId());</span>
+<span class="fc bfc" id="L54" title="All 2 branches covered.">        if (optionalComplex.isEmpty()) {</span>
+<span class="fc" id="L55">            response.error();</span>
+<span class="fc" id="L56">            response.getListMessage().add(&quot;Complejo no encontrado.&quot;);</span>
+<span class="fc" id="L57">            return response;</span>
+        }
+
+<span class="fc" id="L60">        EntityPitch pitch = new EntityPitch();</span>
+<span class="fc" id="L61">        pitch.setIdPitch(UUID.randomUUID().toString());</span>
+<span class="fc" id="L62">        pitch.setComplexId(request.getComplexId());</span>
+<span class="fc" id="L63">        pitch.setName(request.getName());</span>
+<span class="fc" id="L64">        pitch.setSport(request.getSport());</span>
+<span class="fc" id="L65">        pitch.setPricePerHour(request.getPricePerHour());</span>
+<span class="pc bpc" id="L66" title="3 of 4 branches missed.">        pitch.setImage(request.getImage() != null &amp;&amp; !request.getImage().isEmpty() ? request.getImage() : &quot;assets/images/default-pitch.jpg&quot;);</span>
+<span class="fc" id="L67">        pitch.setActive(request.getActive());</span>
+<span class="fc" id="L68">        pitch.setCreatedAt(new Date());</span>
+<span class="fc" id="L69">        pitch.setUpdatedAt(new Date());</span>
+
+<span class="fc" id="L71">        repositoryPitch.save(pitch);</span>
+
+<span class="fc" id="L73">        EntityComplex complex = optionalComplex.get();</span>
+<span class="pc bpc" id="L74" title="1 of 2 branches missed.">        complex.setPitchesCount((complex.getPitchesCount() == null ? 0 : complex.getPitchesCount()) + 1);</span>
+<span class="fc" id="L75">        complex.setUpdatedAt(new Date());</span>
+<span class="fc" id="L76">        repositoryComplex.save(complex);</span>
+
+<span class="fc" id="L78">        response.setId(pitch.getIdPitch());</span>
+<span class="fc" id="L79">        response.setComplexId(pitch.getComplexId());</span>
+<span class="fc" id="L80">        response.setName(pitch.getName());</span>
+<span class="fc" id="L81">        response.setSport(pitch.getSport());</span>
+<span class="fc" id="L82">        response.setPricePerHour(pitch.getPricePerHour());</span>
+<span class="fc" id="L83">        response.setImage(pitch.getImage());</span>
+<span class="fc" id="L84">        response.setActive(pitch.getActive());</span>
+
+<span class="fc" id="L86">        response.success();</span>
+<span class="fc" id="L87">        response.getListMessage().add(&quot;Cancha registrada exitosamente.&quot;);</span>
+<span class="fc" id="L88">        return response;</span>
+    }
+
+    @Transactional
+    public ResponsePitchGet update(RequestPitchUpdate request) {
+<span class="fc" id="L93">        ResponsePitchGet response = new ResponsePitchGet();</span>
+
+<span class="fc" id="L95">        Optional&lt;EntityPitch&gt; optionalPitch = repositoryPitch.findById(request.getId());</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        if (optionalPitch.isEmpty()) {</span>
+<span class="fc" id="L97">            response.error();</span>
+<span class="fc" id="L98">            response.getListMessage().add(&quot;Cancha no encontrada.&quot;);</span>
+<span class="fc" id="L99">            return response;</span>
+        }
+
+<span class="fc" id="L102">        EntityPitch pitch = optionalPitch.get();</span>
+<span class="fc" id="L103">        pitch.setName(request.getName());</span>
+<span class="fc" id="L104">        pitch.setSport(request.getSport());</span>
+<span class="fc" id="L105">        pitch.setPricePerHour(request.getPricePerHour());</span>
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">        if (request.getImage() != null) {</span>
+<span class="nc" id="L107">            pitch.setImage(request.getImage());</span>
+        }
+<span class="fc" id="L109">        pitch.setActive(request.getActive());</span>
+<span class="fc" id="L110">        pitch.setUpdatedAt(new Date());</span>
+
+<span class="fc" id="L112">        repositoryPitch.save(pitch);</span>
+
+<span class="fc" id="L114">        response.setId(pitch.getIdPitch());</span>
+<span class="fc" id="L115">        response.setComplexId(pitch.getComplexId());</span>
+<span class="fc" id="L116">        response.setName(pitch.getName());</span>
+<span class="fc" id="L117">        response.setSport(pitch.getSport());</span>
+<span class="fc" id="L118">        response.setPricePerHour(pitch.getPricePerHour());</span>
+<span class="fc" id="L119">        response.setImage(pitch.getImage());</span>
+<span class="fc" id="L120">        response.setActive(pitch.getActive());</span>
+
+<span class="fc" id="L122">        response.success();</span>
+<span class="fc" id="L123">        response.getListMessage().add(&quot;Cancha actualizada exitosamente.&quot;);</span>
+<span class="fc" id="L124">        return response;</span>
+    }
+
+    @Transactional
+    public ResponsePitchGet delete(String pitchId) {
+<span class="nc" id="L129">        ResponsePitchGet response = new ResponsePitchGet();</span>
+
+<span class="nc" id="L131">        Optional&lt;EntityPitch&gt; optionalPitch = repositoryPitch.findById(pitchId);</span>
+<span class="nc bnc" id="L132" title="All 2 branches missed.">        if (optionalPitch.isEmpty()) {</span>
+<span class="nc" id="L133">            response.error();</span>
+<span class="nc" id="L134">            response.getListMessage().add(&quot;Cancha no encontrada.&quot;);</span>
+<span class="nc" id="L135">            return response;</span>
+        }
+
+<span class="nc" id="L138">        EntityPitch pitch = optionalPitch.get();</span>
+<span class="nc" id="L139">        repositoryPitch.delete(pitch);</span>
+
+<span class="nc" id="L141">        Optional&lt;EntityComplex&gt; optionalComplex = repositoryComplex.findById(pitch.getComplexId());</span>
+<span class="nc bnc" id="L142" title="All 2 branches missed.">        if (optionalComplex.isPresent()) {</span>
+<span class="nc" id="L143">            EntityComplex complex = optionalComplex.get();</span>
+<span class="nc bnc" id="L144" title="All 2 branches missed.">            int currentCount = complex.getPitchesCount() == null ? 0 : complex.getPitchesCount();</span>
+<span class="nc" id="L145">            complex.setPitchesCount(Math.max(0, currentCount - 1));</span>
+<span class="nc" id="L146">            complex.setUpdatedAt(new Date());</span>
+<span class="nc" id="L147">            repositoryComplex.save(complex);</span>
+        }
+
+<span class="nc" id="L150">        response.setId(pitch.getIdPitch());</span>
+<span class="nc" id="L151">        response.setComplexId(pitch.getComplexId());</span>
+<span class="nc" id="L152">        response.setName(pitch.getName());</span>
+<span class="nc" id="L153">        response.setSport(pitch.getSport());</span>
+<span class="nc" id="L154">        response.setPricePerHour(pitch.getPricePerHour());</span>
+<span class="nc" id="L155">        response.setImage(pitch.getImage());</span>
+<span class="nc" id="L156">        response.setActive(pitch.getActive());</span>
+
+<span class="nc" id="L158">        response.success();</span>
+<span class="nc" id="L159">        response.getListMessage().add(&quot;Cancha eliminada exitosamente.&quot;);</span>
+<span class="nc" id="L160">        return response;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

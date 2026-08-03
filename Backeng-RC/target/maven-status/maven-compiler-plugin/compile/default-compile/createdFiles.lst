@@ -6,6 +6,7 @@ com\epiis\reservacanchas\controller\UserController.class
 com\epiis\reservacanchas\dto\request\RequestUserToggleBlock.class
 com\epiis\reservacanchas\staticdata\EnumComplexStatus.class
 com\epiis\reservacanchas\dto\request\RequestTransactionInsert.class
+com\epiis\reservacanchas\config\GlobalExceptionHandler.class
 com\epiis\reservacanchas\dto\request\RequestUserRegister$ComplexData.class
 com\epiis\reservacanchas\dto\response\ResponseComplexGet.class
 com\epiis\reservacanchas\helper\GenericHelper.class

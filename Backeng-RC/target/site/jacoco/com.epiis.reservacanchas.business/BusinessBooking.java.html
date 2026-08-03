@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BusinessBooking.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">reserva-canchas-backend</a> &gt; <a href="index.source.html" class="el_package">com.epiis.reservacanchas.business</a> &gt; <span class="el_source">BusinessBooking.java</span></div><h1>BusinessBooking.java</h1><pre class="source lang-java linenums">package com.epiis.reservacanchas.business;
+
+import com.epiis.reservacanchas.entity.EntityBooking;
+import com.epiis.reservacanchas.entity.EntityTransaction;
+import com.epiis.reservacanchas.repository.RepositoryBooking;
+import com.epiis.reservacanchas.repository.RepositoryTransaction;
+import com.epiis.reservacanchas.dto.request.RequestBookingInsert;
+import com.epiis.reservacanchas.dto.request.RequestBookingCancel;
+import com.epiis.reservacanchas.dto.response.ResponseBookingGet;
+import com.epiis.reservacanchas.staticdata.EnumBookingStatus;
+import com.epiis.reservacanchas.staticdata.EnumTransactionType;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.util.*;
+
+@Service
+public class BusinessBooking {
+
+    private final RepositoryBooking repositoryBooking;
+    private final RepositoryTransaction repositoryTransaction;
+
+<span class="fc" id="L22">    public BusinessBooking(RepositoryBooking repositoryBooking, RepositoryTransaction repositoryTransaction) {</span>
+<span class="fc" id="L23">        this.repositoryBooking = repositoryBooking;</span>
+<span class="fc" id="L24">        this.repositoryTransaction = repositoryTransaction;</span>
+<span class="fc" id="L25">    }</span>
+
+    @Transactional(readOnly = true)
+    public List&lt;Map&lt;String, Object&gt;&gt; getAll(String clientEmail, String complexId) {
+        List&lt;EntityBooking&gt; bookings;
+<span class="pc bpc" id="L30" title="1 of 4 branches missed.">        if (clientEmail != null &amp;&amp; !clientEmail.isEmpty()) {</span>
+<span class="fc" id="L31">            bookings = repositoryBooking.findByClientEmail(clientEmail);</span>
+<span class="pc bpc" id="L32" title="1 of 4 branches missed.">        } else if (complexId != null &amp;&amp; !complexId.isEmpty()) {</span>
+<span class="fc" id="L33">            bookings = repositoryBooking.findByComplexId(complexId);</span>
+        } else {
+<span class="fc" id="L35">            bookings = repositoryBooking.findAll();</span>
+        }
+
+<span class="fc" id="L38">        List&lt;Map&lt;String, Object&gt;&gt; list = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">        for (EntityBooking b : bookings) {</span>
+<span class="fc" id="L40">            Map&lt;String, Object&gt; map = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc" id="L41">            map.put(&quot;id&quot;, b.getIdBooking());</span>
+<span class="fc" id="L42">            map.put(&quot;pitchId&quot;, b.getPitchId());</span>
+<span class="fc" id="L43">            map.put(&quot;complexId&quot;, b.getComplexId());</span>
+<span class="fc" id="L44">            map.put(&quot;complexName&quot;, b.getComplexName());</span>
+<span class="fc" id="L45">            map.put(&quot;pitchName&quot;, b.getPitchName());</span>
+<span class="fc" id="L46">            map.put(&quot;sport&quot;, b.getSport());</span>
+<span class="fc" id="L47">            map.put(&quot;clientName&quot;, b.getClientName());</span>
+<span class="fc" id="L48">            map.put(&quot;clientEmail&quot;, b.getClientEmail());</span>
+<span class="fc" id="L49">            map.put(&quot;date&quot;, b.getDate());</span>
+<span class="fc" id="L50">            map.put(&quot;timeSlot&quot;, b.getTimeSlot());</span>
+<span class="fc" id="L51">            map.put(&quot;price&quot;, b.getPrice());</span>
+<span class="fc" id="L52">            map.put(&quot;status&quot;, b.getStatus().name().toLowerCase());</span>
+<span class="fc" id="L53">            map.put(&quot;paymentMethod&quot;, b.getPaymentMethod());</span>
+<span class="fc" id="L54">            list.add(map);</span>
+<span class="fc" id="L55">        }</span>
+<span class="fc" id="L56">        return list;</span>
+    }
+
+    @Transactional
+    public ResponseBookingGet insert(RequestBookingInsert request) {
+<span class="fc" id="L61">        ResponseBookingGet response = new ResponseBookingGet();</span>
+
+<span class="fc" id="L63">        EntityBooking booking = new EntityBooking();</span>
+<span class="fc" id="L64">        booking.setIdBooking(UUID.randomUUID().toString());</span>
+<span class="fc" id="L65">        booking.setPitchId(request.getPitchId());</span>
+<span class="fc" id="L66">        booking.setComplexId(request.getComplexId());</span>
+<span class="fc" id="L67">        booking.setComplexName(request.getComplexName());</span>
+<span class="fc" id="L68">        booking.setPitchName(request.getPitchName());</span>
+<span class="fc" id="L69">        booking.setSport(request.getSport());</span>
+<span class="fc" id="L70">        booking.setClientName(request.getClientName());</span>
+<span class="fc" id="L71">        booking.setClientEmail(request.getClientEmail());</span>
+<span class="fc" id="L72">        booking.setDate(request.getDate());</span>
+<span class="fc" id="L73">        booking.setTimeSlot(request.getTimeSlot());</span>
+<span class="fc" id="L74">        booking.setPrice(request.getPrice());</span>
+        // Determine status from request: 'reserved' → RESERVED, otherwise → ACTIVE
+<span class="fc" id="L76">        EnumBookingStatus bookingStatus = EnumBookingStatus.ACTIVE;</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        if (&quot;reserved&quot;.equalsIgnoreCase(request.getStatus())) {</span>
+<span class="fc" id="L78">            bookingStatus = EnumBookingStatus.RESERVED;</span>
+        }
+
+        // Prevención de reservas dobles para turnos activos
+<span class="fc bfc" id="L82" title="All 2 branches covered.">        if (bookingStatus == EnumBookingStatus.ACTIVE) {</span>
+<span class="fc" id="L83">            boolean alreadyOccupied = repositoryBooking.existsByPitchIdAndDateAndTimeSlotAndStatus(</span>
+<span class="fc" id="L84">                request.getPitchId(), request.getDate(), request.getTimeSlot(), EnumBookingStatus.ACTIVE</span>
+            );
+<span class="fc bfc" id="L86" title="All 2 branches covered.">            if (alreadyOccupied) {</span>
+<span class="fc" id="L87">                response.error();</span>
+<span class="fc" id="L88">                response.getListMessage().add(&quot;El turno seleccionado ya fue confirmado y ocupado por otro usuario.&quot;);</span>
+<span class="fc" id="L89">                return response;</span>
+            }
+        }
+
+<span class="fc" id="L93">        booking.setStatus(bookingStatus);</span>
+<span class="fc" id="L94">        booking.setPaymentMethod(request.getPaymentMethod());</span>
+<span class="fc" id="L95">        booking.setCreatedAt(new Date());</span>
+<span class="fc" id="L96">        booking.setUpdatedAt(new Date());</span>
+
+<span class="fc" id="L98">        repositoryBooking.save(booking);</span>
+
+<span class="fc" id="L100">        EntityTransaction transaction = new EntityTransaction();</span>
+<span class="fc" id="L101">        transaction.setIdTransaction(UUID.randomUUID().toString());</span>
+<span class="fc" id="L102">        transaction.setComplexId(request.getComplexId());</span>
+<span class="fc" id="L103">        transaction.setType(EnumTransactionType.INCOME);</span>
+<span class="fc" id="L104">        transaction.setDescription(&quot;Reserva de cancha: &quot; + request.getPitchName() + &quot; (&quot; + request.getClientName() + &quot;)&quot;);</span>
+<span class="fc" id="L105">        transaction.setAmount(request.getPrice());</span>
+<span class="fc" id="L106">        transaction.setDate(request.getDate());</span>
+<span class="fc" id="L107">        transaction.setCreatedAt(new Date());</span>
+<span class="fc" id="L108">        transaction.setUpdatedAt(new Date());</span>
+
+<span class="fc" id="L110">        repositoryTransaction.save(transaction);</span>
+
+<span class="fc" id="L112">        response.setId(booking.getIdBooking());</span>
+<span class="fc" id="L113">        response.setPitchId(booking.getPitchId());</span>
+<span class="fc" id="L114">        response.setComplexId(booking.getComplexId());</span>
+<span class="fc" id="L115">        response.setComplexName(booking.getComplexName());</span>
+<span class="fc" id="L116">        response.setPitchName(booking.getPitchName());</span>
+<span class="fc" id="L117">        response.setSport(booking.getSport());</span>
+<span class="fc" id="L118">        response.setClientName(booking.getClientName());</span>
+<span class="fc" id="L119">        response.setClientEmail(booking.getClientEmail());</span>
+<span class="fc" id="L120">        response.setDate(booking.getDate());</span>
+<span class="fc" id="L121">        response.setTimeSlot(booking.getTimeSlot());</span>
+<span class="fc" id="L122">        response.setPrice(booking.getPrice());</span>
+<span class="fc" id="L123">        response.setStatus(booking.getStatus().name().toLowerCase());</span>
+<span class="fc" id="L124">        response.setPaymentMethod(booking.getPaymentMethod());</span>
+
+<span class="fc" id="L126">        response.success();</span>
+<span class="fc" id="L127">        response.getListMessage().add(&quot;Reserva registrada exitosamente.&quot;);</span>
+<span class="fc" id="L128">        return response;</span>
+    }
+
+    @Transactional
+    public ResponseBookingGet cancel(RequestBookingCancel request) {
+<span class="fc" id="L133">        ResponseBookingGet response = new ResponseBookingGet();</span>
+<span class="fc" id="L134">        Optional&lt;EntityBooking&gt; optionalBooking = repositoryBooking.findById(request.getBookingId());</span>
+
+<span class="fc bfc" id="L136" title="All 2 branches covered.">        if (optionalBooking.isEmpty()) {</span>
+<span class="fc" id="L137">            response.error();</span>
+<span class="fc" id="L138">            response.getListMessage().add(&quot;Reserva no encontrada.&quot;);</span>
+<span class="fc" id="L139">            return response;</span>
+        }
+
+<span class="fc" id="L142">        EntityBooking booking = optionalBooking.get();</span>
+<span class="fc" id="L143">        booking.setStatus(EnumBookingStatus.CANCELLED);</span>
+<span class="fc" id="L144">        booking.setUpdatedAt(new Date());</span>
+<span class="fc" id="L145">        repositoryBooking.save(booking);</span>
+
+<span class="fc" id="L147">        EntityTransaction transaction = new EntityTransaction();</span>
+<span class="fc" id="L148">        transaction.setIdTransaction(UUID.randomUUID().toString());</span>
+<span class="fc" id="L149">        transaction.setComplexId(booking.getComplexId());</span>
+<span class="fc" id="L150">        transaction.setType(EnumTransactionType.EXPENSE);</span>
+<span class="fc" id="L151">        transaction.setDescription(&quot;Reembolso / Cancelación de reserva: &quot; + booking.getPitchName());</span>
+<span class="fc" id="L152">        transaction.setAmount(booking.getPrice());</span>
+<span class="fc" id="L153">        transaction.setDate(booking.getDate());</span>
+<span class="fc" id="L154">        transaction.setCreatedAt(new Date());</span>
+<span class="fc" id="L155">        transaction.setUpdatedAt(new Date());</span>
+<span class="fc" id="L156">        repositoryTransaction.save(transaction);</span>
+
+<span class="fc" id="L158">        response.setId(booking.getIdBooking());</span>
+<span class="fc" id="L159">        response.setPitchId(booking.getPitchId());</span>
+<span class="fc" id="L160">        response.setComplexId(booking.getComplexId());</span>
+<span class="fc" id="L161">        response.setComplexName(booking.getComplexName());</span>
+<span class="fc" id="L162">        response.setPitchName(booking.getPitchName());</span>
+<span class="fc" id="L163">        response.setSport(booking.getSport());</span>
+<span class="fc" id="L164">        response.setClientName(booking.getClientName());</span>
+<span class="fc" id="L165">        response.setClientEmail(booking.getClientEmail());</span>
+<span class="fc" id="L166">        response.setDate(booking.getDate());</span>
+<span class="fc" id="L167">        response.setTimeSlot(booking.getTimeSlot());</span>
+<span class="fc" id="L168">        response.setPrice(booking.getPrice());</span>
+<span class="fc" id="L169">        response.setStatus(booking.getStatus().name().toLowerCase());</span>
+<span class="fc" id="L170">        response.setPaymentMethod(booking.getPaymentMethod());</span>
+
+<span class="fc" id="L172">        response.success();</span>
+<span class="fc" id="L173">        response.getListMessage().add(&quot;Reserva cancelada exitosamente.&quot;);</span>
+<span class="fc" id="L174">        return response;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

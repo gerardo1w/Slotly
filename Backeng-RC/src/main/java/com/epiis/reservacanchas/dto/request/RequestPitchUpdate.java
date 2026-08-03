@@ -1,13 +1,9 @@
 package com.epiis.reservacanchas.dto.request;
 
-import lombok.Getter;
-import lombok.Setter;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
-@Getter
-@Setter
 public class RequestPitchUpdate {
 
     @NotBlank(message = "El campo \"id\" es requerido.")
@@ -30,4 +26,19 @@ public class RequestPitchUpdate {
 
     @NotNull(message = "El campo \"active\" es requerido.")
     private Boolean active;
+
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+    public String getComplexId() { return complexId; }
+    public void setComplexId(String complexId) { this.complexId = complexId; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public String getSport() { return sport; }
+    public void setSport(String sport) { this.sport = sport; }
+    public Double getPricePerHour() { return pricePerHour; }
+    public void setPricePerHour(Double pricePerHour) { this.pricePerHour = pricePerHour; }
+    public String getImage() { return image; }
+    public void setImage(String image) { this.image = image; }
+    public Boolean getActive() { return active; }
+    public void setActive(Boolean active) { this.active = active; }
 }

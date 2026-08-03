@@ -77,6 +77,19 @@ public class BusinessBooking {
         if ("reserved".equalsIgnoreCase(request.getStatus())) {
             bookingStatus = EnumBookingStatus.RESERVED;
         }
+
+        // Prevención de reservas dobles para turnos activos
+        if (bookingStatus == EnumBookingStatus.ACTIVE) {
+            boolean alreadyOccupied = repositoryBooking.existsByPitchIdAndDateAndTimeSlotAndStatus(
+                request.getPitchId(), request.getDate(), request.getTimeSlot(), EnumBookingStatus.ACTIVE
+            );
+            if (alreadyOccupied) {
+                response.error();
+                response.getListMessage().add("El turno seleccionado ya fue confirmado y ocupado por otro usuario.");
+                return response;
+            }
+        }
+
         booking.setStatus(bookingStatus);
         booking.setPaymentMethod(request.getPaymentMethod());
         booking.setCreatedAt(new Date());

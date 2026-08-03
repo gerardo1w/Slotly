@@ -1,13 +1,9 @@
 package com.epiis.reservacanchas.dto.request;
 
-import lombok.Getter;
-import lombok.Setter;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
-@Getter
-@Setter
 public class RequestTransactionInsert {
 
     @NotBlank(message = "El campo \"complexId\" es requerido.")
@@ -24,5 +20,16 @@ public class RequestTransactionInsert {
     private Double amount;
 
     @NotBlank(message = "El campo \"date\" es requerido.")
-    private String date; // format: YYYY-MM-DD
+    private String date;
+
+    public String getComplexId() { return complexId; }
+    public void setComplexId(String complexId) { this.complexId = complexId; }
+    public String getType() { return type; }
+    public void setType(String type) { this.type = type; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+    public Double getAmount() { return amount; }
+    public void setAmount(Double amount) { this.amount = amount; }
+    public String getDate() { return date; }
+    public void setDate(String date) { this.date = date; }
 }
