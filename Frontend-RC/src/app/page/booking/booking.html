@@ -59,15 +59,7 @@
     <!-- ============================================== -->
     <div *ngIf="!isHistoryMode" class="py-6 px-6 lg:px-10 max-w-6xl mx-auto pb-12">
       
-      <!-- Top Action Bar (Back button) -->
-      <div class="mb-5 flex items-center justify-between">
-        <button 
-          (click)="goBack()" 
-          class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 bg-white border border-slate-200 hover:bg-slate-50 hover:text-slate-900 transition-all cursor-pointer shadow-xs"
-        >
-          <i class="pi pi-arrow-left text-[11px]"></i> Volver a explorar canchas
-        </button>
-      </div>
+
 
       <!-- Minimalist Header Card -->
       <div class="bg-white rounded-3xl p-6 lg:p-8 border border-slate-100 shadow-sm mb-8">
@@ -246,18 +238,7 @@
 
       </div>
 
-      <!-- Bottom Information Banner -->
-      <div class="max-w-5xl mx-auto mt-6 px-6">
-        <div class="bg-white rounded-3xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4 border border-slate-100 shadow-sm">
-          <div>
-            <h3 class="text-slate-800 font-extrabold text-sm leading-snug">¿Cómo funciona la reserva?</h3>
-            <p class="text-xs text-slate-400 mt-1 font-light">Selecciona una casilla libre y envía tu solicitud. El dueño notificará la confirmación.</p>
-          </div>
-          <div class="flex items-center gap-2 text-xs font-bold text-[#00a775] bg-[#ecfdf5] px-4 py-2 rounded-2xl border border-emerald-100">
-            <i class="pi pi-check-circle"></i> Confirmación digital en plataforma
-          </div>
-        </div>
-      </div>
+
 
       <!-- Booking Details Dialog Modal Overlay -->
       <div *ngIf="bookingModalVisible" class="fixed inset-0 bg-slate-900/65 backdrop-blur-xs flex items-center justify-center z-50 animate-fade-in px-4">
