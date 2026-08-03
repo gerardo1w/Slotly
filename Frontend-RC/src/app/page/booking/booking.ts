@@ -41,7 +41,8 @@ export class BookingComponent implements OnInit {
   selectedPitch: ResponsePitchGet | null = null;
   selectedComplex: ResponseComplexGet | null = null;
 
-  // Weekly Grid Structure
+  // Weekly Grid Structure & Week Navigation
+  currentWeekOffset: number = 0; // 0 = current week, 1 = next week, etc.
   weekDates: { dayName: string; date: string }[] = [];
   scheduleRows: ScheduleRow[] = [];
 
@@ -119,7 +120,7 @@ export class BookingComponent implements OnInit {
     const today = new Date();
     const currentDayOfWeek = today.getDay();
     // Monday is index 1, Sunday is 0. Let's calculate offset to Monday
-    const mondayOffset = currentDayOfWeek === 0 ? -6 : 1 - currentDayOfWeek;
+    const mondayOffset = (currentDayOfWeek === 0 ? -6 : 1 - currentDayOfWeek) + (this.currentWeekOffset * 7);
     const monday = new Date(today);
     monday.setDate(today.getDate() + mondayOffset);
 
@@ -132,6 +133,23 @@ export class BookingComponent implements OnInit {
         date: d.toISOString().split('T')[0]
       };
     });
+  }
+
+  nextWeek() {
+    this.currentWeekOffset++;
+    this.loadScheduleGrid();
+  }
+
+  prevWeek() {
+    if (this.currentWeekOffset > 0) {
+      this.currentWeekOffset--;
+      this.loadScheduleGrid();
+    }
+  }
+
+  resetToCurrentWeek() {
+    this.currentWeekOffset = 0;
+    this.loadScheduleGrid();
   }
 
   loadScheduleGrid() {

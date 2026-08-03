@@ -146,15 +146,49 @@
       <!-- Weekly Availability Grid -->
       <div class="max-w-5xl mx-auto mt-8 px-6">
         
-        <!-- Title & Legend -->
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 mb-4">
+        <!-- Title, Week Navigator & Legend -->
+        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 mb-4">
           <div>
-            <h2 class="text-slate-800 font-extrabold text-lg tracking-tight">Disponibilidad Semanal</h2>
+            <div class="flex items-center gap-2">
+              <h2 class="text-slate-800 font-extrabold text-lg tracking-tight">Disponibilidad Semanal</h2>
+              <span *ngIf="currentWeekOffset > 0" class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-100 text-[#00a775]">
+                +{{ currentWeekOffset }} {{ currentWeekOffset === 1 ? 'semana' : 'semanas' }}
+              </span>
+            </div>
             <p class="text-[11px] text-[#00a775] mt-0.5">Toca un horario <span class="font-bold">libre</span> para reservarlo.</p>
           </div>
 
+          <!-- Week Navigation Controls -->
+          <div class="flex items-center gap-2 bg-white px-3 py-1.5 rounded-2xl border border-slate-200 shadow-xs">
+            <button 
+              (click)="prevWeek()" 
+              [disabled]="currentWeekOffset === 0"
+              [ngClass]="currentWeekOffset === 0 ? 'text-slate-300 cursor-not-allowed' : 'text-slate-700 hover:bg-slate-100 hover:text-[#00a775] cursor-pointer'"
+              class="w-7 h-7 rounded-xl flex items-center justify-center transition-all border-none bg-transparent"
+              title="Semana anterior"
+            >
+              <i class="pi pi-chevron-left text-xs font-bold"></i>
+            </button>
+
+            <button 
+              (click)="resetToCurrentWeek()"
+              class="px-2.5 py-1 text-[11px] font-bold rounded-lg transition-all border-none cursor-pointer"
+              [ngClass]="currentWeekOffset === 0 ? 'bg-slate-100 text-slate-800' : 'bg-emerald-50 text-[#00a775] hover:bg-emerald-100'"
+            >
+              Semana Actual ({{ weekDates[0]?.date | date:'dd/MM' }} - {{ weekDates[6]?.date | date:'dd/MM' }})
+            </button>
+
+            <button 
+              (click)="nextWeek()"
+              class="w-7 h-7 rounded-xl flex items-center justify-center text-slate-700 hover:bg-slate-100 hover:text-[#00a775] transition-all border-none cursor-pointer bg-transparent"
+              title="Siguiente semana"
+            >
+              <i class="pi pi-chevron-right text-xs font-bold"></i>
+            </button>
+          </div>
+
           <!-- Legends -->
-          <div class="flex items-center gap-4 text-[10px] font-bold text-slate-500">
+          <div class="flex items-center gap-3 text-[10px] font-bold text-slate-500">
             <span class="flex items-center gap-1.5">
               <span class="w-2.5 h-2.5 rounded-full bg-[#10b981]"></span> Libre
             </span>
