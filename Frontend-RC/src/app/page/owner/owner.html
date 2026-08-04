@@ -65,6 +65,13 @@
             {{ pendingRequests.length }}
           </span>
         </button>
+        <button 
+          (click)="activeSection = 'historial-reservas'"
+          [ngClass]="activeSection === 'historial-reservas' ? 'bg-[#00a775] text-white shadow-sm font-extrabold' : 'text-slate-500 hover:bg-slate-50 font-medium bg-transparent'"
+          class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs transition-all border-none outline-none cursor-pointer w-full text-left"
+        >
+          <i class="pi pi-history text-sm"></i> Historial
+        </button>
         <!-- INVENTARIO — bloqueado en Plan Free -->
         <button 
           [disabled]="!isPro"
@@ -1203,6 +1210,132 @@
             >
               <i class="pi pi-check text-xs"></i> Aceptar Reserva
             </button>
+          </div>
+        </div>
+      </div>
+
+    <!-- ============================================== -->
+    <!-- SECTION 10: HISTORIAL DE RESERVAS (OWNER)       -->
+    <!-- ============================================== -->
+    <div *ngIf="activeSection === 'historial-reservas'" class="max-w-5xl mx-auto space-y-6 animate-fade-in">
+      
+      <!-- Header -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Historial de Reservas</h1>
+          <p class="text-xs text-slate-500 font-medium mt-1">Consulta el registro completo de reservas y la información detallada de cada cliente.</p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold text-slate-400">Total:</span>
+          <span class="bg-emerald-50 text-[#00a775] text-xs font-extrabold px-3 py-1 rounded-full border border-emerald-100">
+            {{ getFilteredHistoryBookings().length }} reservas
+          </span>
+        </div>
+      </div>
+
+      <!-- Filters & Search Bar -->
+      <div class="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-3">
+        <!-- Search Input -->
+        <div class="relative w-full sm:w-80">
+          <i class="pi pi-search absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+          <input 
+            type="text" 
+            [(ngModel)]="historySearchTerm"
+            placeholder="Buscar por cliente, email, cancha o fecha..."
+            class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-700 outline-none focus:border-[#00a775] transition-colors"
+          />
+        </div>
+
+        <!-- Status Filter Pills -->
+        <div class="flex items-center gap-1.5 w-full sm:w-auto overflow-x-auto pb-1 sm:pb-0">
+          <button 
+            (click)="historyStatusFilter = 'all'"
+            [ngClass]="historyStatusFilter === 'all' ? 'bg-[#00a775] text-white shadow-xs font-bold' : 'bg-slate-50 text-slate-500 hover:bg-slate-100 font-semibold'"
+            class="px-3 py-1.5 rounded-xl text-xs transition-all border-none cursor-pointer"
+          >
+            Todas
+          </button>
+          <button 
+            (click)="historyStatusFilter = 'active'"
+            [ngClass]="historyStatusFilter === 'active' ? 'bg-emerald-600 text-white shadow-xs font-bold' : 'bg-slate-50 text-slate-500 hover:bg-slate-100 font-semibold'"
+            class="px-3 py-1.5 rounded-xl text-xs transition-all border-none cursor-pointer"
+          >
+            Confirmadas
+          </button>
+          <button 
+            (click)="historyStatusFilter = 'reserved'"
+            [ngClass]="historyStatusFilter === 'reserved' ? 'bg-amber-500 text-white shadow-xs font-bold' : 'bg-slate-50 text-slate-500 hover:bg-slate-100 font-semibold'"
+            class="px-3 py-1.5 rounded-xl text-xs transition-all border-none cursor-pointer"
+          >
+            Pendientes
+          </button>
+          <button 
+            (click)="historyStatusFilter = 'cancelled'"
+            [ngClass]="historyStatusFilter === 'cancelled' ? 'bg-rose-500 text-white shadow-xs font-bold' : 'bg-slate-50 text-slate-500 hover:bg-slate-100 font-semibold'"
+            class="px-3 py-1.5 rounded-xl text-xs transition-all border-none cursor-pointer"
+          >
+            Canceladas
+          </button>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div *ngIf="getFilteredHistoryBookings().length === 0" class="bg-white rounded-3xl p-12 text-center border border-slate-100 shadow-sm">
+        <div class="w-12 h-12 rounded-full bg-slate-50 text-slate-400 flex items-center justify-center mx-auto mb-3">
+          <i class="pi pi-history text-lg"></i>
+        </div>
+        <h3 class="text-sm font-bold text-slate-700">No se encontraron reservas</h3>
+        <p class="text-xs text-slate-400 mt-1">No hay registros que coincidan con los filtros seleccionados.</p>
+      </div>
+
+      <!-- Minimal Cards List -->
+      <div *ngIf="getFilteredHistoryBookings().length > 0" class="space-y-3">
+        <div 
+          *ngFor="let item of getFilteredHistoryBookings()"
+          class="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm hover:border-slate-200 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+        >
+          <!-- Client & Reservation Main Info -->
+          <div class="flex items-center gap-3.5 min-w-0">
+            <!-- Client Avatar Circle -->
+            <div class="w-10 h-10 rounded-full bg-emerald-50 text-[#00a775] font-extrabold text-xs flex items-center justify-center flex-shrink-0 uppercase border border-emerald-100">
+              {{ item.clientName ? item.clientName.substring(0,2) : 'CL' }}
+            </div>
+            <div class="min-w-0 space-y-0.5">
+              <!-- Client Name & Email -->
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-xs font-extrabold text-slate-800">{{ item.clientName || 'Cliente' }}</span>
+                <span class="text-[10px] text-slate-400 font-medium">({{ item.clientEmail || 'Sin email' }})</span>
+              </div>
+              <!-- Pitch & Sport Info -->
+              <div class="text-[11px] font-semibold text-slate-500 flex items-center gap-2 flex-wrap">
+                <span>Cancha: <strong class="text-slate-700">{{ item.pitchName }}</strong></span>
+                <span class="text-slate-300">·</span>
+                <span class="bg-slate-100 text-slate-600 px-2 py-0.5 rounded-md text-[10px] font-bold">{{ item.sport }}</span>
+              </div>
+              <!-- Date & Time Slot -->
+              <div class="flex items-center gap-3 text-[10px] text-slate-400 font-medium pt-0.5">
+                <span class="flex items-center gap-1"><i class="pi pi-calendar text-[9px]"></i> {{ item.date | date:'dd/MM/yyyy' }}</span>
+                <span class="flex items-center gap-1"><i class="pi pi-clock text-[9px]"></i> {{ item.timeSlot }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Price & Status Badge Right Side -->
+          <div class="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-4 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-50">
+            <div class="text-left sm:text-right">
+              <span class="text-[9px] text-slate-400 font-bold block uppercase tracking-wider">Monto</span>
+              <span class="text-sm font-extrabold text-slate-800">S/ {{ item.price | number:'1.2-2' }}</span>
+            </div>
+            <span 
+              [ngClass]="{
+                'bg-emerald-50 text-emerald-700 border-emerald-100': item.status === 'active',
+                'bg-amber-50 text-amber-700 border-amber-100': item.status === 'reserved',
+                'bg-rose-50 text-rose-600 border-rose-100': item.status === 'cancelled'
+              }"
+              class="px-3 py-1 rounded-full text-[10px] font-bold border select-none whitespace-nowrap"
+            >
+              {{ item.status === 'active' ? 'Confirmada' : item.status === 'reserved' ? 'Pendiente' : 'Cancelada' }}
+            </span>
           </div>
         </div>
       </div>

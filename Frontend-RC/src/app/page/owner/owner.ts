@@ -63,7 +63,11 @@ interface ScheduleRow {
 export class OwnerDashboardComponent implements OnInit {
   currentUser: UserProfile | null = null;
   myComplex: ResponseComplexGet | null = null;
-  activeSection: 'dashboard' | 'scheduler' | 'mis-canchas' | 'inventory' | 'expenses' | 'incomes' | 'closure' | 'mi-local' | 'requests' = 'mis-canchas';
+  activeSection: 'dashboard' | 'scheduler' | 'mis-canchas' | 'inventory' | 'expenses' | 'incomes' | 'closure' | 'mi-local' | 'requests' | 'historial-reservas' = 'mis-canchas';
+
+  // Booking History Filters
+  historySearchTerm = '';
+  historyStatusFilter: 'all' | 'active' | 'reserved' | 'cancelled' = 'all';
 
   // Plan management — false = Plan Free, true = Plan Pro
   isPro = false;
@@ -1106,6 +1110,23 @@ export class OwnerDashboardComponent implements OnInit {
         }
       });
     }
+  }
+
+  getFilteredHistoryBookings(): ResponseBookingGetAll[] {
+    let list = this.myBookings || [];
+    if (this.historyStatusFilter !== 'all') {
+      list = list.filter(b => b.status === this.historyStatusFilter);
+    }
+    if (this.historySearchTerm.trim()) {
+      const term = this.historySearchTerm.toLowerCase();
+      list = list.filter(b => 
+        (b.clientName && b.clientName.toLowerCase().includes(term)) ||
+        (b.clientEmail && b.clientEmail.toLowerCase().includes(term)) ||
+        (b.pitchName && b.pitchName.toLowerCase().includes(term)) ||
+        (b.date && b.date.includes(term))
+      );
+    }
+    return list;
   }
 
   logout() {
