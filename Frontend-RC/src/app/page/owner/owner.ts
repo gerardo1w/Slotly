@@ -63,7 +63,10 @@ interface ScheduleRow {
 export class OwnerDashboardComponent implements OnInit {
   currentUser: UserProfile | null = null;
   myComplex: ResponseComplexGet | null = null;
-  activeSection: 'dashboard' | 'scheduler' | 'mis-canchas' | 'inventory' | 'expenses' | 'incomes' | 'closure' | 'mi-local' | 'requests' = 'dashboard';
+  activeSection: 'dashboard' | 'scheduler' | 'mis-canchas' | 'inventory' | 'expenses' | 'incomes' | 'closure' | 'mi-local' | 'requests' = 'mis-canchas';
+
+  // Plan management — false = Plan Free, true = Plan Pro
+  isPro = false;
 
   // Mi Local form fields
   complexFormName = '';

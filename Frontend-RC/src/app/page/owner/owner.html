@@ -17,12 +17,20 @@
 
       <!-- Navigation Tabs Menu List -->
       <nav class="space-y-1.5 flex flex-col">
+        <!-- TABLERO — bloqueado en Plan Free -->
         <button 
-          (click)="activeSection = 'dashboard'"
-          [ngClass]="activeSection === 'dashboard' ? 'bg-[#00a775] text-white shadow-sm font-extrabold' : 'text-slate-500 hover:bg-slate-50 font-medium bg-transparent'"
-          class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs transition-all border-none outline-none cursor-pointer w-full text-left"
+          [disabled]="!isPro"
+          (click)="isPro && (activeSection = 'dashboard')"
+          [ngClass]="isPro && activeSection === 'dashboard' ? 'bg-[#00a775] text-white shadow-sm font-extrabold' : isPro ? 'text-slate-500 hover:bg-slate-50 font-medium bg-transparent' : 'text-slate-300 bg-transparent font-medium'"
+          [class.cursor-not-allowed]="!isPro"
+          [class.cursor-pointer]="isPro"
+          class="flex items-center justify-between px-4 py-2.5 rounded-xl text-xs transition-all border-none outline-none w-full text-left"
+          [title]="!isPro ? 'Disponible en Plan Pro' : ''"
         >
-          <i class="pi pi-th-large text-sm"></i> Tablero
+          <span class="flex items-center gap-3">
+            <i class="pi pi-th-large text-sm"></i> Tablero
+          </span>
+          <span *ngIf="!isPro" class="bg-amber-400 text-white text-[8px] font-extrabold px-1.5 py-0.5 rounded-full leading-none">PRO</span>
         </button>
         <button 
           (click)="activeSection = 'mis-canchas'"
@@ -57,33 +65,65 @@
             {{ pendingRequests.length }}
           </span>
         </button>
+        <!-- INVENTARIO — bloqueado en Plan Free -->
         <button 
-          (click)="activeSection = 'inventory'"
-          [ngClass]="activeSection === 'inventory' ? 'bg-[#00a775] text-white shadow-sm font-extrabold' : 'text-slate-500 hover:bg-slate-50 font-medium bg-transparent'"
-          class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs transition-all border-none outline-none cursor-pointer w-full text-left"
+          [disabled]="!isPro"
+          (click)="isPro && (activeSection = 'inventory')"
+          [ngClass]="isPro && activeSection === 'inventory' ? 'bg-[#00a775] text-white shadow-sm font-extrabold' : isPro ? 'text-slate-500 hover:bg-slate-50 font-medium bg-transparent' : 'text-slate-300 bg-transparent font-medium'"
+          [class.cursor-not-allowed]="!isPro"
+          [class.cursor-pointer]="isPro"
+          class="flex items-center justify-between px-4 py-2.5 rounded-xl text-xs transition-all border-none outline-none w-full text-left"
+          [title]="!isPro ? 'Disponible en Plan Pro' : ''"
         >
-          <i class="pi pi-box text-sm"></i> Inventario
+          <span class="flex items-center gap-3">
+            <i class="pi pi-box text-sm"></i> Inventario
+          </span>
+          <span *ngIf="!isPro" class="bg-amber-400 text-white text-[8px] font-extrabold px-1.5 py-0.5 rounded-full leading-none">PRO</span>
         </button>
+        <!-- GASTOS — bloqueado en Plan Free -->
         <button 
-          (click)="activeSection = 'expenses'"
-          [ngClass]="activeSection === 'expenses' ? 'bg-[#00a775] text-white shadow-sm font-extrabold' : 'text-slate-500 hover:bg-slate-50 font-medium bg-transparent'"
-          class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs transition-all border-none outline-none cursor-pointer w-full text-left"
+          [disabled]="!isPro"
+          (click)="isPro && (activeSection = 'expenses')"
+          [ngClass]="isPro && activeSection === 'expenses' ? 'bg-[#00a775] text-white shadow-sm font-extrabold' : isPro ? 'text-slate-500 hover:bg-slate-50 font-medium bg-transparent' : 'text-slate-300 bg-transparent font-medium'"
+          [class.cursor-not-allowed]="!isPro"
+          [class.cursor-pointer]="isPro"
+          class="flex items-center justify-between px-4 py-2.5 rounded-xl text-xs transition-all border-none outline-none w-full text-left"
+          [title]="!isPro ? 'Disponible en Plan Pro' : ''"
         >
-          <i class="pi pi-chart-line rotate-180 text-sm"></i> Gastos
+          <span class="flex items-center gap-3">
+            <i class="pi pi-chart-line rotate-180 text-sm"></i> Gastos
+          </span>
+          <span *ngIf="!isPro" class="bg-amber-400 text-white text-[8px] font-extrabold px-1.5 py-0.5 rounded-full leading-none">PRO</span>
         </button>
+        <!-- INGRESOS — bloqueado en Plan Free -->
         <button 
-          (click)="activeSection = 'incomes'"
-          [ngClass]="activeSection === 'incomes' ? 'bg-[#00a775] text-white shadow-sm font-extrabold' : 'text-slate-500 hover:bg-slate-50 font-medium bg-transparent'"
-          class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs transition-all border-none outline-none cursor-pointer w-full text-left"
+          [disabled]="!isPro"
+          (click)="isPro && (activeSection = 'incomes')"
+          [ngClass]="isPro && activeSection === 'incomes' ? 'bg-[#00a775] text-white shadow-sm font-extrabold' : isPro ? 'text-slate-500 hover:bg-slate-50 font-medium bg-transparent' : 'text-slate-300 bg-transparent font-medium'"
+          [class.cursor-not-allowed]="!isPro"
+          [class.cursor-pointer]="isPro"
+          class="flex items-center justify-between px-4 py-2.5 rounded-xl text-xs transition-all border-none outline-none w-full text-left"
+          [title]="!isPro ? 'Disponible en Plan Pro' : ''"
         >
-          <i class="pi pi-chart-line text-sm"></i> Ingresos
+          <span class="flex items-center gap-3">
+            <i class="pi pi-chart-line text-sm"></i> Ingresos
+          </span>
+          <span *ngIf="!isPro" class="bg-amber-400 text-white text-[8px] font-extrabold px-1.5 py-0.5 rounded-full leading-none">PRO</span>
         </button>
+        <!-- CIERRE DE CAJA — bloqueado en Plan Free -->
         <button 
-          (click)="activeSection = 'closure'"
-          [ngClass]="activeSection === 'closure' ? 'bg-[#00a775] text-white shadow-sm font-extrabold' : 'text-slate-500 hover:bg-slate-50 font-medium bg-transparent'"
-          class="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs transition-all border-none outline-none cursor-pointer w-full text-left"
+          [disabled]="!isPro"
+          (click)="isPro && (activeSection = 'closure')"
+          [ngClass]="isPro && activeSection === 'closure' ? 'bg-[#00a775] text-white shadow-sm font-extrabold' : isPro ? 'text-slate-500 hover:bg-slate-50 font-medium bg-transparent' : 'text-slate-300 bg-transparent font-medium'"
+          [class.cursor-not-allowed]="!isPro"
+          [class.cursor-pointer]="isPro"
+          class="flex items-center justify-between px-4 py-2.5 rounded-xl text-xs transition-all border-none outline-none w-full text-left"
+          [title]="!isPro ? 'Disponible en Plan Pro' : ''"
         >
-          <i class="pi pi-calculator text-sm"></i> Cierre de Caja
+          <span class="flex items-center gap-3">
+            <i class="pi pi-calculator text-sm"></i> Cierre de Caja
+          </span>
+          <span *ngIf="!isPro" class="bg-amber-400 text-white text-[8px] font-extrabold px-1.5 py-0.5 rounded-full leading-none">PRO</span>
         </button>
       </nav>
     </div>
