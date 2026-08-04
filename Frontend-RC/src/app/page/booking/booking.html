@@ -357,59 +357,49 @@
       </div>
 
       <!-- Bookings list -->
-      <div *ngIf="myBookings.length > 0" class="space-y-4 animate-fade-in max-w-4xl mx-auto">
+      <div *ngIf="myBookings.length > 0" class="space-y-2 animate-fade-in max-w-4xl mx-auto">
         <div 
           *ngFor="let booking of myBookings" 
-          class="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 transition-all hover:shadow"
+          class="bg-white rounded-2xl px-5 py-3.5 border border-slate-100 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 transition-all hover:border-slate-200"
         >
-          <!-- Info left side -->
-          <div class="flex items-start gap-4">
-            <div class="w-11 h-11 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 flex-shrink-0">
-              <svg *ngIf="booking.sport === 'Fútbol'" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="9"/><path d="M12 7 L9.5 9.5 L10.5 13 L13.5 13 L14.5 9.5 Z"/><path d="M12 7 L12 3.1"/><path d="M9.5 9.5 L6 8"/><path d="M10.5 13 L8 16"/><path d="M13.5 13 L16 16"/><path d="M14.5 9.5 L18 8"/>
-              </svg>
-              <svg *ngIf="booking.sport === 'Vóley'" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="9"/><path d="M12 3 Q7 7 7 12 Q7 17 12 21"/><path d="M3.5 8.5 Q8 10 11 14 Q14 18 20.5 18.5"/><path d="M3.5 15.5 Q8 14 11 10 Q14 6 20.5 5.5"/>
-              </svg>
-              <svg *ngIf="booking.sport === 'Básquet'" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="9"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/><path d="M12 3 Q6 7 6 12 Q6 17 12 21"/><path d="M12 3 Q18 7 18 12 Q18 17 12 21"/>
-              </svg>
+          <!-- Left info -->
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="text-sm font-bold text-slate-800 truncate">{{ booking.complexName }}</span>
+              <span class="text-[10px] text-slate-400 font-semibold">·</span>
+              <span class="text-xs text-slate-500 font-semibold truncate">{{ booking.pitchName }}</span>
             </div>
-            <div>
-              <h3 class="text-slate-800 font-extrabold text-sm leading-snug">{{ booking.complexName }}</h3>
-              <p class="text-xs text-slate-500 font-semibold mt-0.5">Cancha: {{ booking.pitchName }}</p>
-              <div class="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-[11px] text-slate-400 font-medium">
-                <span class="flex items-center gap-1"><i class="pi pi-calendar text-[10px]"></i> {{ booking.date | date:'dd/MM/yyyy' }}</span>
-                <span class="flex items-center gap-1"><i class="pi pi-clock text-[10px]"></i> {{ booking.timeSlot }}</span>
-              </div>
-              <div class="flex flex-wrap gap-x-4 gap-y-1 mt-1 text-[11px] text-slate-400 font-medium">
-                <span class="flex items-center gap-1"><i class="pi pi-dollar text-[10px]"></i> S/ {{ booking.price | number:'1.2-2' }}</span>
-                <span class="flex items-center gap-1"><i class="pi pi-wallet text-[10px]"></i> Pago: {{ booking.paymentMethod }}</span>
-              </div>
+            <div class="flex flex-wrap items-center gap-x-4 gap-y-0.5 mt-1 text-[11px] text-slate-400 font-medium">
+              <span class="flex items-center gap-1">
+                <i class="pi pi-calendar text-[10px]"></i> {{ booking.date | date:'dd/MM/yyyy' }}
+              </span>
+              <span class="flex items-center gap-1">
+                <i class="pi pi-clock text-[10px]"></i> {{ booking.timeSlot }}
+              </span>
+              <span class="flex items-center gap-1 text-emerald-600 font-bold">
+                S/ {{ booking.price | number:'1.2-2' }}
+              </span>
             </div>
           </div>
 
-          <!-- Badges & Action right side -->
-          <div class="flex sm:flex-col items-end justify-between w-full sm:w-auto gap-3 self-stretch sm:self-center">
-            <!-- Status Badge -->
+          <!-- Right: status + action -->
+          <div class="flex items-center gap-2 flex-shrink-0">
             <span 
               [ngClass]="{
-                'bg-[#ecfdf5] border-[#a7f3d0] text-[#047857]': booking.status === 'active',
-                'bg-[#fffbeb] border-[#fef3c7] text-[#b45309]': booking.status === 'reserved',
-                'bg-[#fef2f2] border-[#fecaca] text-[#b91c1c]': booking.status === 'cancelled'
+                'bg-emerald-50 text-emerald-700 border-emerald-100': booking.status === 'active',
+                'bg-amber-50 text-amber-700 border-amber-100': booking.status === 'reserved',
+                'bg-rose-50 text-rose-600 border-rose-100': booking.status === 'cancelled'
               }"
-              class="px-3 py-1 rounded-full text-[10px] font-bold border inline-block select-none"
+              class="px-2.5 py-1 rounded-full text-[10px] font-bold border select-none"
             >
               {{ booking.status === 'active' ? 'Confirmada' : booking.status === 'reserved' ? 'Reservada' : 'Cancelada' }}
             </span>
-
-            <!-- Cancel Button -->
             <button 
               *ngIf="booking.status !== 'cancelled'" 
               (click)="cancelBooking(booking.id)"
-              class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100/60 font-bold text-[10px] py-1.5 px-3.5 rounded-xl transition-all cursor-pointer border border-red-100/55 flex items-center gap-1 focus:outline-none"
+              class="text-rose-500 hover:text-rose-700 bg-transparent hover:bg-rose-50 font-bold text-[10px] py-1 px-2.5 rounded-lg transition-all cursor-pointer border border-rose-100 focus:outline-none"
             >
-              Cancelar Reserva
+              Cancelar
             </button>
           </div>
         </div>
