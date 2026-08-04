@@ -1111,6 +1111,17 @@ export class OwnerDashboardComponent implements OnInit {
     return this.pendingRequests.reduce((sum, item) => sum + (item.price || 0), 0);
   }
 
+  /** Returns true if another booking for the exact same pitch, date and slot is already confirmed (active) */
+  isSlotConflictAccepted(req: ResponseBookingGetAll): boolean {
+    return this.myBookings.some(b => 
+      b.id !== req.id &&
+      b.pitchId === req.pitchId &&
+      b.date === req.date &&
+      b.timeSlot === req.timeSlot &&
+      b.status === 'active'
+    );
+  }
+
   getClientBookingCount(clientEmail: string): number {
     if (!clientEmail) return 0;
     return this.myBookings.filter(b => b.clientEmail === clientEmail && b.status !== 'cancelled').length;

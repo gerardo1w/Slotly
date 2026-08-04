@@ -1321,10 +1321,14 @@
               Rechazar
             </button>
             <button 
-              (click)="acceptBookingRequest(req)"
-              class="px-5 py-2.5 rounded-xl bg-[#00a775] hover:bg-[#009468] text-white text-xs font-extrabold shadow-md shadow-emerald-500/10 transition-all outline-none border-none cursor-pointer flex items-center gap-2"
+              [disabled]="isSlotConflictAccepted(req)"
+              (click)="!isSlotConflictAccepted(req) && acceptBookingRequest(req)"
+              [ngClass]="isSlotConflictAccepted(req) ? 'bg-slate-200 text-slate-400 cursor-not-allowed border-slate-200 shadow-none' : 'bg-[#00a775] hover:bg-[#009468] text-white cursor-pointer shadow-md shadow-emerald-500/10'"
+              class="px-5 py-2.5 rounded-xl text-xs font-extrabold transition-all outline-none border-none flex items-center gap-2"
+              [title]="isSlotConflictAccepted(req) ? 'Horario ya ocupado por otra reserva aceptada' : ''"
             >
-              <i class="pi pi-check text-xs"></i> Aceptar Reserva
+              <i class="pi pi-check text-xs"></i> 
+              {{ isSlotConflictAccepted(req) ? 'Horario Ya Ocupado' : 'Aceptar Reserva' }}
             </button>
           </div>
         </div>

@@ -30,11 +30,14 @@ interface ScheduleRow {
     FormsModule
   ],
   templateUrl: './booking.html',
-  styleUrls: ['./booking.css']
 })
 export class BookingComponent implements OnInit {
   currentUser: UserProfile | null = null;
-  isHistoryMode = false;
+  activeTab: 'calendar' | 'history' | 'notifications' = 'calendar';
+
+  get isHistoryMode(): boolean {
+    return this.activeTab !== 'calendar';
+  }
 
   // Selected pitch details
   selectedPitchId: string | null = null;
@@ -54,6 +57,10 @@ export class BookingComponent implements OnInit {
   // History State
   myBookings: ResponseBookingGetAll[] = [];
 
+  get notifications(): ResponseBookingGetAll[] {
+    return this.myBookings.filter(b => b.status === 'active' || b.status === 'cancelled');
+  }
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -72,10 +79,10 @@ export class BookingComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       this.selectedPitchId = params['pitchId'] || null;
       if (this.selectedPitchId) {
-        this.isHistoryMode = false;
+        this.activeTab = 'calendar';
         this.loadPitchDetails();
       } else {
-        this.isHistoryMode = true;
+        this.activeTab = 'history';
         this.loadHistory();
       }
     });
@@ -223,7 +230,15 @@ export class BookingComponent implements OnInit {
             booking.pitchId === this.selectedPitch?.id &&
             booking.date === wDate.date &&
             booking.timeSlot === h.slot &&
-            booking.status === 'active'          // Only confirmed bookings block the slot
+            booking.status === 'active'
+          );
+
+          const myPendingBooking = bookings.find(booking =>
+            booking.pitchId === this.selectedPitch?.id &&
+            booking.date === wDate.date &&
+            booking.timeSlot === h.slot &&
+            booking.status === 'reserved' &&
+            booking.clientEmail === this.currentUser?.email
           );
 
           // ── 3. Determine visual cell status ─────────────────────────────────
@@ -233,12 +248,12 @@ export class BookingComponent implements OnInit {
             // Date/time already passed → gray regardless of booking
             cellStatus = 'Pasado';
           } else if (activeBooking) {
-            // Slot is today, booking is active, and the time has just arrived → Ocupado
-            const isToday = wDate.date === todayStr;
-            const timeHasArrived = isToday && currentHour >= slotStartHour;
-            cellStatus = timeHasArrived ? 'Ocupado' : 'Reservado';
+            // Confirmed booking by owner → Ocupado (Red)
+            cellStatus = 'Ocupado';
+          } else if (myPendingBooking) {
+            // Pending request by current client → Reservado (Amber/Yellow)
+            cellStatus = 'Reservado';
           }
-          // If booking.status === 'reserved' (pending owner approval) → cellStatus stays 'Libre'
 
           return {
             dayIndex: idx,
@@ -246,7 +261,7 @@ export class BookingComponent implements OnInit {
             date: wDate.date,
             timeSlot: h.slot,
             status: cellStatus,
-            bookingId: activeBooking?.id
+            bookingId: activeBooking?.id || myPendingBooking?.id
           };
         });
 
@@ -307,7 +322,7 @@ export class BookingComponent implements OnInit {
   }
 
   goBack() {
-    this.isHistoryMode = false;
+    this.activeTab = 'calendar';
     this.selectedPitchId = null;
     this.router.navigate(['/complex']);
   }
