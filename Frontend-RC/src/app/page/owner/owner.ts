@@ -1116,7 +1116,40 @@ export class OwnerDashboardComponent implements OnInit {
     return this.myBookings.filter(b => b.clientEmail === clientEmail && b.status !== 'cancelled').length;
   }
 
-  /** Returns a human-readable string of when the booking request was submitted */
+  deleteBookingHistoryItem(bookingId: string) {
+    if (confirm('¿Deseas eliminar este registro del historial?')) {
+      apiBookingCancel(this.http, bookingId).subscribe({
+        next: () => {
+          this.myBookings = this.myBookings.filter(b => b.id !== bookingId);
+          this.loadScheduleGrid();
+          this.calculateMetrics();
+          this.infoMessage = 'Registro eliminado correctamente.';
+          setTimeout(() => this.infoMessage = '', 3000);
+        },
+        error: (err) => {
+          console.error('Error eliminando reserva', err);
+          this.myBookings = this.myBookings.filter(b => b.id !== bookingId);
+          this.loadScheduleGrid();
+          this.calculateMetrics();
+        }
+      });
+    }
+  }
+
+  clearAllBookingHistory() {
+    if (this.myBookings.length === 0) return;
+    if (confirm('¿Estás seguro de que deseas vaciar TODO el historial de reservas? Esta acción borrará todos los registros.')) {
+      const ids = this.myBookings.map(b => b.id);
+      ids.forEach(id => {
+        apiBookingCancel(this.http, id).subscribe();
+      });
+      this.myBookings = [];
+      this.loadScheduleGrid();
+      this.calculateMetrics();
+      this.infoMessage = 'Historial de reservas vaciado por completo.';
+      setTimeout(() => this.infoMessage = '', 3000);
+    }
+  }
   formatRequestTime(createdAt?: string): string {
     if (!createdAt) return 'Hora desconocida';
     const d = new Date(createdAt);

@@ -1343,9 +1343,16 @@
           <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Historial de Reservas</h1>
           <p class="text-xs text-slate-500 font-medium mt-1">Consulta el registro completo de reservas y la información detallada de cada cliente.</p>
         </div>
-        <div class="flex items-center gap-2">
-          <span class="text-xs font-bold text-slate-400">Total:</span>
-          <span class="bg-emerald-50 text-[#00a775] text-xs font-extrabold px-3 py-1 rounded-full border border-emerald-100">
+        <div class="flex items-center gap-3">
+          <button 
+            *ngIf="myBookings.length > 0"
+            (click)="clearAllBookingHistory()"
+            class="flex items-center gap-1.5 text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100/70 border border-rose-100 px-3.5 py-2 rounded-xl transition-all cursor-pointer outline-none"
+            title="Eliminar todo el historial de reservas"
+          >
+            <i class="pi pi-trash text-xs"></i> Vaciar historial
+          </button>
+          <span class="bg-emerald-50 text-[#00a775] text-xs font-extrabold px-3 py-2 rounded-xl border border-emerald-100">
             {{ getFilteredHistoryBookings().length }} reservas
           </span>
         </div>
@@ -1438,7 +1445,7 @@
             </div>
           </div>
 
-          <!-- Price & Status Badge Right Side -->
+          <!-- Price, Status Badge & Delete Icon Right Side -->
           <div class="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-4 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-50">
             <div class="text-left sm:text-right">
               <span class="text-[9px] text-slate-400 font-bold block uppercase tracking-wider">Monto</span>
@@ -1454,6 +1461,13 @@
             >
               {{ item.status === 'active' ? 'Confirmada' : item.status === 'reserved' ? 'Pendiente' : 'Cancelada' }}
             </span>
+            <button 
+              (click)="deleteBookingHistoryItem(item.id)"
+              class="text-slate-400 hover:text-rose-600 p-1.5 rounded-lg hover:bg-rose-50 transition-all cursor-pointer border-none bg-transparent outline-none"
+              title="Eliminar registro"
+            >
+              <i class="pi pi-trash text-xs"></i>
+            </button>
           </div>
         </div>
       </div>
