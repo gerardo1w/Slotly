@@ -173,4 +173,9 @@ public class BusinessBooking {
         response.getListMessage().add("Reserva cancelada exitosamente.");
         return response;
     }
+
+    @Transactional
+    public void delete(String bookingId) {
+        repositoryBooking.deleteById(bookingId);
+    }
 }

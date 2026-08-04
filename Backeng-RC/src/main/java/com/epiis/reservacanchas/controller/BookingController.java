@@ -55,4 +55,10 @@ public class BookingController {
         }
         return ResponseEntity.ok(response);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> actionDelete(@PathVariable String id) {
+        businessBooking.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -27,3 +27,8 @@ export function apiBookingCancel(http: HttpClient, bookingId: string): Observabl
   const url = `${environment.urlBase}/reservas/cancel`;
   return http.put<any>(url, { bookingId });
 }
+
+export function apiBookingDelete(http: HttpClient, bookingId: string): Observable<any> {
+  const url = `${environment.urlBase}/reservas/${bookingId}`;
+  return http.delete<any>(url);
+}

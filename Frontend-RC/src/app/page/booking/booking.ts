@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { AuthService, UserProfile } from '../../auth/auth.service';
-import { apiPitchGetAll, apiBookingInsert, apiBookingGetAll, apiBookingCancel, apiComplexGetAll } from '../../api/api';
+import { apiPitchGetAll, apiBookingInsert, apiBookingGetAll, apiBookingCancel, apiBookingDelete, apiComplexGetAll } from '../../api/api';
 import { ResponsePitchGet, ResponseComplexGet, ResponseBookingGetAll } from '../../api/models';
 
 interface ScheduleCell {
@@ -128,12 +128,13 @@ export class BookingComponent implements OnInit {
 
   deleteBooking(bookingId: string) {
     if (confirm('¿Deseas eliminar este registro del historial?')) {
-      apiBookingCancel(this.http, bookingId).subscribe({
+      apiBookingDelete(this.http, bookingId).subscribe({
         next: () => {
           this.myBookings = this.myBookings.filter(b => b.id !== bookingId);
         },
         error: (err) => {
           console.error('Error eliminando reserva', err);
+          // Fallback: remove from UI anyway
           this.myBookings = this.myBookings.filter(b => b.id !== bookingId);
         }
       });
@@ -143,9 +144,9 @@ export class BookingComponent implements OnInit {
   clearAllHistory() {
     if (this.myBookings.length === 0) return;
     if (confirm('¿Estás seguro de que deseas vaciar TODO el historial de reservas? Esta acción no se puede deshacer.')) {
-      const ids = this.myBookings.map(b => b.id);
+      const ids = [...this.myBookings.map(b => b.id)];
       ids.forEach(id => {
-        apiBookingCancel(this.http, id).subscribe();
+        apiBookingDelete(this.http, id).subscribe();
       });
       this.myBookings = [];
     }

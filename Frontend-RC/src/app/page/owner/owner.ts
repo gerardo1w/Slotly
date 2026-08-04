@@ -13,6 +13,7 @@ import {
   apiPitchDelete,
   apiBookingGetAll,
   apiBookingCancel,
+  apiBookingDelete,
   apiBookingInsert,
   apiTransactionGetAll,
   apiTransactionInsert,
@@ -1129,7 +1130,7 @@ export class OwnerDashboardComponent implements OnInit {
 
   deleteBookingHistoryItem(bookingId: string) {
     if (confirm('¿Deseas eliminar este registro del historial?')) {
-      apiBookingCancel(this.http, bookingId).subscribe({
+      apiBookingDelete(this.http, bookingId).subscribe({
         next: () => {
           this.myBookings = this.myBookings.filter(b => b.id !== bookingId);
           this.loadScheduleGrid();
@@ -1139,6 +1140,7 @@ export class OwnerDashboardComponent implements OnInit {
         },
         error: (err) => {
           console.error('Error eliminando reserva', err);
+          // Fallback: remove from UI anyway
           this.myBookings = this.myBookings.filter(b => b.id !== bookingId);
           this.loadScheduleGrid();
           this.calculateMetrics();
@@ -1150,9 +1152,9 @@ export class OwnerDashboardComponent implements OnInit {
   clearAllBookingHistory() {
     if (this.myBookings.length === 0) return;
     if (confirm('¿Estás seguro de que deseas vaciar TODO el historial de reservas? Esta acción borrará todos los registros.')) {
-      const ids = this.myBookings.map(b => b.id);
+      const ids = [...this.myBookings.map(b => b.id)];
       ids.forEach(id => {
-        apiBookingCancel(this.http, id).subscribe();
+        apiBookingDelete(this.http, id).subscribe();
       });
       this.myBookings = [];
       this.loadScheduleGrid();
