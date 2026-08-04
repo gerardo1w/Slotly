@@ -165,6 +165,13 @@ export class OwnerDashboardComponent implements OnInit {
   weekOffset = 0; // 0 = semana actual, 1 = próxima semana, etc.
   scheduleRows: ScheduleRow[] = [];
 
+  // Manual Booking Modal State
+  showManualBookingModal = false;
+  manualBookingCell: ScheduleCell | null = null;
+  manualClientName = '';
+  manualClientEmail = '';
+  manualPaymentMethod: 'Yape' | 'Plin' | 'Efectivo' = 'Efectivo';
+
   // Feedback Alerts
   infoMessage = '';
   errorMessage = '';
@@ -628,12 +635,65 @@ export class OwnerDashboardComponent implements OnInit {
 
   onCellToggle(cell: ScheduleCell) {
     if (cell.status === 'Libre') {
-      cell.status = 'Ocupado';
+      // Abre el formulario modal para ingreso manual de datos de cliente
+      this.openManualBookingModal(cell);
     } else if (cell.status === 'Ocupado') {
       cell.status = 'Reservado';
     } else {
       cell.status = 'Libre';
     }
+  }
+
+  openManualBookingModal(cell: ScheduleCell) {
+    this.manualBookingCell = cell;
+    this.manualClientName = '';
+    this.manualClientEmail = '';
+    this.manualPaymentMethod = 'Efectivo';
+    this.showManualBookingModal = true;
+  }
+
+  closeManualBookingModal() {
+    this.showManualBookingModal = false;
+    this.manualBookingCell = null;
+  }
+
+  confirmManualBooking() {
+    if (!this.manualBookingCell || !this.selectedPitchForSchedule || !this.myComplex) return;
+
+    if (!this.manualClientName.trim()) {
+      this.errorMessage = 'Por favor ingresa el nombre del cliente.';
+      setTimeout(() => this.errorMessage = '', 3000);
+      return;
+    }
+
+    const newBookingData = {
+      pitchId: this.selectedPitchForSchedule.id,
+      complexId: this.myComplex.id,
+      complexName: this.myComplex.name,
+      pitchName: this.selectedPitchForSchedule.name,
+      sport: this.selectedPitchForSchedule.sport,
+      clientName: this.manualClientName.trim(),
+      clientEmail: this.manualClientEmail.trim() || `${this.manualClientName.trim().toLowerCase().replace(/\s+/g, '.')}@manual.local`,
+      date: this.manualBookingCell.date,
+      timeSlot: this.manualBookingCell.timeSlot,
+      price: this.selectedPitchForSchedule.pricePerHour,
+      paymentMethod: (this.manualPaymentMethod === 'Efectivo' ? 'Yape' : this.manualPaymentMethod) as any,
+      status: 'active' as const
+    };
+
+    apiBookingInsert(this.http, newBookingData).subscribe({
+      next: () => {
+        this.infoMessage = `¡Reserva registrada correctamente para ${this.manualClientName}!`;
+        setTimeout(() => this.infoMessage = '', 4000);
+        this.closeManualBookingModal();
+        this.reloadBookingsAndGrid();
+      },
+      error: (err) => {
+        console.error('Error guardando reserva manual:', err);
+        this.errorMessage = 'Ocurrió un error al registrar la reserva manual.';
+        setTimeout(() => this.errorMessage = '', 4000);
+      }
+    });
   }
 
   saveScheduleChanges() {

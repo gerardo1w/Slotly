@@ -654,6 +654,122 @@
         </table>
       </div>
 
+      <!-- MODAL: REGISTRO MANUAL DE RESERVA POR EL DUEÑO -->
+      <div 
+        *ngIf="showManualBookingModal" 
+        class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-fade-in"
+      >
+        <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-slate-100 space-y-6 animate-scale-up">
+          
+          <!-- Modal Header -->
+          <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+            <div>
+              <h3 class="text-base font-extrabold text-slate-800">Nueva Reserva Manual</h3>
+              <p class="text-xs text-slate-400 font-medium mt-0.5">Ingresa los datos del cliente para agendar este horario.</p>
+            </div>
+            <button 
+              (click)="closeManualBookingModal()"
+              class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center border-none cursor-pointer transition-all outline-none"
+            >
+              <i class="pi pi-times text-xs"></i>
+            </button>
+          </div>
+
+          <!-- Summary info badge -->
+          <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 flex items-center justify-between text-xs">
+            <div>
+              <span class="block text-[10px] uppercase font-bold text-emerald-600/80">Cancha & Horario</span>
+              <span class="font-extrabold text-emerald-900 mt-0.5 block">
+                {{ selectedPitchForSchedule?.name }} · {{ manualBookingCell?.date | date:'dd/MM/yyyy' }}
+              </span>
+              <span class="text-[11px] font-semibold text-emerald-700 block mt-0.5">
+                <i class="pi pi-clock text-[10px]"></i> {{ manualBookingCell?.timeSlot }}
+              </span>
+            </div>
+            <div class="text-right">
+              <span class="block text-[10px] uppercase font-bold text-emerald-600/80">Precio</span>
+              <span class="text-base font-extrabold text-[#00a775]">S/ {{ selectedPitchForSchedule?.pricePerHour | number:'1.2-2' }}</span>
+            </div>
+          </div>
+
+          <!-- Form Fields -->
+          <div class="space-y-4 text-xs font-semibold">
+            <!-- Client Name -->
+            <div class="flex flex-col gap-1.5">
+              <label class="text-slate-600">Nombre del cliente <span class="text-rose-500">*</span></label>
+              <div class="relative">
+                <i class="pi pi-user absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input 
+                  type="text" 
+                  [(ngModel)]="manualClientName" 
+                  placeholder="Ej: Carlos Mendoza"
+                  class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 focus:border-[#00a775] rounded-xl outline-none font-semibold text-slate-700 transition-colors"
+                />
+              </div>
+            </div>
+
+            <!-- Client Email (Optional) -->
+            <div class="flex flex-col gap-1.5">
+              <label class="text-slate-600">Correo electrónico <span class="text-slate-400 font-normal">(Opcional)</span></label>
+              <div class="relative">
+                <i class="pi pi-envelope absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input 
+                  type="email" 
+                  [(ngModel)]="manualClientEmail" 
+                  placeholder="carlos@gmail.com"
+                  class="w-full pl-9 pr-4 py-2.5 bg-slate-50 border border-slate-200 focus:border-[#00a775] rounded-xl outline-none font-semibold text-slate-700 transition-colors"
+                />
+              </div>
+            </div>
+
+            <!-- Payment Method Selector -->
+            <div class="flex flex-col gap-1.5">
+              <label class="text-slate-600">Método de cobro</label>
+              <div class="grid grid-cols-3 gap-2">
+                <button 
+                  (click)="manualPaymentMethod = 'Efectivo'"
+                  [ngClass]="manualPaymentMethod === 'Efectivo' ? 'bg-[#00a775] text-white font-extrabold shadow-xs' : 'bg-slate-50 text-slate-600 border border-slate-200 font-medium hover:bg-slate-100'"
+                  class="py-2.5 rounded-xl text-xs transition-all border-none cursor-pointer outline-none flex items-center justify-center gap-1.5"
+                >
+                  <i class="pi pi-money-bill text-xs"></i> Efectivo
+                </button>
+                <button 
+                  (click)="manualPaymentMethod = 'Yape'"
+                  [ngClass]="manualPaymentMethod === 'Yape' ? 'bg-[#00a775] text-white font-extrabold shadow-xs' : 'bg-slate-50 text-slate-600 border border-slate-200 font-medium hover:bg-slate-100'"
+                  class="py-2.5 rounded-xl text-xs transition-all border-none cursor-pointer outline-none flex items-center justify-center gap-1.5"
+                >
+                  Yape
+                </button>
+                <button 
+                  (click)="manualPaymentMethod = 'Plin'"
+                  [ngClass]="manualPaymentMethod === 'Plin' ? 'bg-[#00a775] text-white font-extrabold shadow-xs' : 'bg-slate-50 text-slate-600 border border-slate-200 font-medium hover:bg-slate-100'"
+                  class="py-2.5 rounded-xl text-xs transition-all border-none cursor-pointer outline-none flex items-center justify-center gap-1.5"
+                >
+                  Plin
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions Footer -->
+          <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
+            <button 
+              (click)="closeManualBookingModal()"
+              class="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold transition-all border-none cursor-pointer outline-none"
+            >
+              Cancelar
+            </button>
+            <button 
+              (click)="confirmManualBooking()"
+              class="px-6 py-2.5 rounded-xl bg-[#00a775] hover:bg-[#009468] text-white text-xs font-extrabold shadow-md shadow-emerald-500/10 transition-all border-none cursor-pointer outline-none flex items-center gap-2"
+            >
+              <i class="pi pi-check text-xs"></i> Confirmar Reserva
+            </button>
+          </div>
+
+        </div>
+      </div>
+
     </div>
 
     <!-- SECTION: INVENTARIO (INVENTORY MANAGEMENT) -->
