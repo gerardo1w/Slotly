@@ -572,6 +572,43 @@
         </span>
       </div>
 
+      <!-- Week Navigation Bar -->
+      <div class="flex items-center justify-between bg-white border border-slate-100 rounded-2xl px-5 py-3 shadow-sm">
+        <!-- Prev Week -->
+        <button
+          (click)="prevWeek()"
+          class="flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-[#00a775] transition-colors bg-transparent border-none outline-none cursor-pointer px-3 py-2 rounded-xl hover:bg-slate-50"
+        >
+          <i class="pi pi-chevron-left text-[11px]"></i> Semana anterior
+        </button>
+
+        <!-- Current Week Label -->
+        <div class="flex items-center gap-3">
+          <span *ngIf="weekOffset !== 0"
+            (click)="resetWeek()"
+            class="text-[10px] font-extrabold text-[#00a775] bg-emerald-50 px-3 py-1 rounded-full cursor-pointer hover:bg-emerald-100 transition-all select-none border border-emerald-100"
+          >
+            Hoy
+          </span>
+          <div class="text-center">
+            <span class="text-xs font-extrabold text-slate-800">
+              {{ weekDates[0]?.date | date:'dd/MM' }} — {{ weekDates[6]?.date | date:'dd/MM/yyyy' }}
+            </span>
+            <span *ngIf="weekOffset === 0" class="block text-[9px] text-[#00a775] font-bold mt-0.5">Semana actual</span>
+            <span *ngIf="weekOffset > 0" class="block text-[9px] text-slate-400 font-bold mt-0.5">+{{ weekOffset }} semana{{ weekOffset > 1 ? 's' : '' }}</span>
+            <span *ngIf="weekOffset < 0" class="block text-[9px] text-slate-400 font-bold mt-0.5">{{ weekOffset }} semana{{ weekOffset < -1 ? 's' : '' }}</span>
+          </div>
+        </div>
+
+        <!-- Next Week -->
+        <button
+          (click)="nextWeek()"
+          class="flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-[#00a775] transition-colors bg-transparent border-none outline-none cursor-pointer px-3 py-2 rounded-xl hover:bg-slate-50"
+        >
+          Semana siguiente <i class="pi pi-chevron-right text-[11px]"></i>
+        </button>
+      </div>
+
       <!-- Grid Availability Matrix Table -->
       <div *ngIf="selectedPitchForSchedule" class="overflow-x-auto bg-white rounded-3xl border border-slate-100 shadow-sm p-4 animate-fade-in">
         <table class="w-full text-center border-collapse min-w-[700px] table-fixed">

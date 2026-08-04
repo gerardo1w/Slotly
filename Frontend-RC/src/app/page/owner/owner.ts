@@ -158,6 +158,7 @@ export class OwnerDashboardComponent implements OnInit {
   // Scheduler slots blocking
   selectedPitchForSchedule: ResponsePitchGet | null = null;
   weekDates: { dayName: string; date: string }[] = [];
+  weekOffset = 0; // 0 = semana actual, 1 = próxima semana, etc.
   scheduleRows: ScheduleRow[] = [];
 
   // Feedback Alerts
@@ -529,7 +530,7 @@ export class OwnerDashboardComponent implements OnInit {
     const currentDayOfWeek = today.getDay();
     const mondayOffset = currentDayOfWeek === 0 ? -6 : 1 - currentDayOfWeek;
     const monday = new Date(today);
-    monday.setDate(today.getDate() + mondayOffset);
+    monday.setDate(today.getDate() + mondayOffset + this.weekOffset * 7);
 
     const dayNames = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
     this.weekDates = dayNames.map((name, index) => {
@@ -540,6 +541,21 @@ export class OwnerDashboardComponent implements OnInit {
         date: d.toISOString().split('T')[0]
       };
     });
+  }
+
+  prevWeek() {
+    this.weekOffset--;
+    if (this.selectedPitchForSchedule) this.loadScheduleGrid();
+  }
+
+  nextWeek() {
+    this.weekOffset++;
+    if (this.selectedPitchForSchedule) this.loadScheduleGrid();
+  }
+
+  resetWeek() {
+    this.weekOffset = 0;
+    if (this.selectedPitchForSchedule) this.loadScheduleGrid();
   }
 
   loadScheduleGrid() {
