@@ -39,6 +39,12 @@ export class ComplexComponent implements OnInit {
 
   sports = ['Fútbol', 'Vóley', 'Básquet'];
 
+  myBookings: any[] = [];
+
+  get notifications(): any[] {
+    return this.myBookings.filter(b => b.status === 'active' || b.status === 'cancelled');
+  }
+
   constructor(
     private http: HttpClient,
     private authService: AuthService,
@@ -58,6 +64,14 @@ export class ComplexComponent implements OnInit {
         this.applyFilters();
       });
     });
+
+    if (this.currentUser) {
+      import('../../api/api').then(m => {
+        m.apiBookingGetAll(this.http, { clientEmail: this.currentUser?.email }).subscribe(bookings => {
+          this.myBookings = bookings;
+        });
+      });
+    }
   }
 
   applyFilters() {
@@ -111,6 +125,10 @@ export class ComplexComponent implements OnInit {
 
   navigateToMyBookings() {
     this.router.navigate(['/booking']);
+  }
+
+  navigateToNotifications() {
+    this.router.navigate(['/booking'], { queryParams: { tab: 'notifications' } });
   }
 
   navigateToBooking(pitchId: string) {

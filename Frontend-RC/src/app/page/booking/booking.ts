@@ -78,7 +78,10 @@ export class BookingComponent implements OnInit {
     // Load active query param
     this.route.queryParams.subscribe(params => {
       this.selectedPitchId = params['pitchId'] || null;
-      if (this.selectedPitchId) {
+      if (params['tab'] === 'notifications') {
+        this.activeTab = 'notifications';
+        this.loadHistory();
+      } else if (this.selectedPitchId) {
         this.activeTab = 'calendar';
         this.loadPitchDetails();
       } else {
